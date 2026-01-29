@@ -1,0 +1,51 @@
+# Canmore Incident Management
+
+Application web de gestion et de signalement d'incidents pour la ville de Canmore.
+
+## Fonctionnalités principales
+- Signalement d'incidents sur une carte interactive
+- Filtrage et visualisation des incidents (résolus/non résolus)
+- Mode administrateur pour la gestion des statuts et la suppression
+- Mode sombre universel et préférences utilisateur persistantes
+- Notifications en temps réel via WebSocket
+
+## Technologies utilisées
+- Python (Flask, Sanic)
+- JavaScript (Leaflet, WebSocket)
+- HTML5, CSS3
+
+## Installation
+1. Cloner le dépôt :
+   ```bash
+   git clone https://github.com/moyamelissa/Canmore_Incident_Management.git
+   cd Canmore_Incident_Management
+   ```
+2. Installer les dépendances Python :
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Lancement de l'application
+1. Démarrer le serveur WebSocket :
+   ```bash
+   python websocket_server.py
+   ```
+2. Démarrer le serveur Flask :
+   ```bash
+   python main.py
+   ```
+3. Accéder à l'application via [http://localhost:5000](http://localhost:5000)
+
+## Structure du projet
+- `main.py` : Application Flask principale
+- `websocket_server.py` : Serveur WebSocket pour notifications
+- `static/` : Fichiers statiques (CSS, JS, images)
+- `templates/` : Fichiers HTML (Jinja2)
+- `server/routes/` : Blueprints Flask (routes)
+- `config/` : Paramètres utilisateur et configuration
+
+## Auteur
+Melissa Moya
+
+## Licence
+Projet open-source à but éducatif.

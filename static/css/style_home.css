@@ -1,9 +1,7 @@
 /*
-=========================
- Titre : Style de la page d'accueil
- Explication : Feuille de style CSS pour la mise en forme et l'apparence de la page d'accueil de l'application Canmore Incident Management.
-=========================
-*/
+ style_home.css
+ Styles pour la page d'accueil de l'application Canmore Incident Management.
+ */
 .footer-global {
 	position: fixed;
 	bottom: 4px;

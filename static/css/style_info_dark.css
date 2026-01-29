@@ -1,6 +1,8 @@
-/* ===============================
-   Dark mode styles for info.html (mirrors style_info.css)
-   =============================== */
+/*
+style_info_dark.css
+Mode sombre pour la page d'information de l'application Canmore Incident Management.
+*/
+
 body {
 	background: #23272a;
 	color: #fff;

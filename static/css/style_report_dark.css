@@ -1,6 +1,8 @@
-/* ===============================
-   Dark mode styles for report.html (mirrors style_report.css)
-   =============================== */
+/*
+style_report_dark.css
+Mode sombre pour la page de rapport de l'application Canmore Incident Management.
+*/
+
 body { background: #23272a; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; }
 .dashboard-header { padding: 12px 32px 0 32px; }
 .summary-cards { display: flex; gap: 24px; margin-bottom: 24px; }

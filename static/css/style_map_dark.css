@@ -1,4 +1,7 @@
-/* Dark mode styles for map.html only. Transferred from dark_mode.css. */
+/*
+style_map_dark.css
+Mode sombre pour la page de carte interactive de l'application Canmore Incident Management.
+*/
 
 .dark-mode .leaflet-popup-content-wrapper,
 .dark-mode .leaflet-popup-tip {

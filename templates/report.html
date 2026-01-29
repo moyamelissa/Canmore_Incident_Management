@@ -1,21 +1,19 @@
+<!--
+    report.html
+    Page de rapport des incidents pour l'application Canmore Incident Management.
+    Statistiques, recherche, export et mise à jour en temps réel.
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Rapport des incidents</title>
-    <!-- ========================= -->
-    <!-- Titre: Feuilles de style et bibliothèques -->
-    <!-- Explication: Inclusion des feuilles de style et bibliothèques nécessaires -->
-    <!-- ========================= -->
+    <!-- Feuilles de style et bibliothèques -->
     <link rel="stylesheet" href="/static/css/style_report.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Styles déplacés dans static/css/style_report.css -->
 </head>
 <body>
-    <!-- ========================= -->
-    <!-- Titre: En-tête du tableau de bord -->
-    <!-- Explication: Affichage des statistiques et navigation -->
-    <!-- ========================= -->
+    <!-- En-tête du tableau de bord (navigation et statistiques) -->
     <div class="dashboard-header">
         <div style="display:flex;justify-content:space-between;align-items:center;">
             <div style="display:flex;align-items:center;gap:18px;">
@@ -44,10 +42,7 @@
             </div>
         </div>
     </div>
-    <!-- ========================= -->
-    <!-- Titre: Contenu principal -->
-    <!-- Explication: Recherche, tableau des incidents et export -->
-    <!-- ========================= -->
+    <!-- Contenu principal : recherche, tableau et export -->
     <div class="main-content">
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Rechercher par type, description, statut...">
@@ -64,16 +59,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Rows will be filled by JS -->
+                    <!-- Rempli dynamiquement par JS -->
                 </tbody>
             </table>
         </div>
-
     </div>
-    <!-- ========================= -->
-    <!-- Titre: Scripts de gestion des incidents -->
-    <!-- Explication: Chargement, affichage, filtrage et export des incidents -->
-    <!-- ========================= -->
+    <!-- Scripts de gestion des incidents, recherche, export et WebSocket -->
     <script>
     // =========================
     // Titre: Chargement et affichage des incidents
@@ -181,16 +172,10 @@
     });
 
 </script>
-<!-- ========================= -->
-<!-- Titre: WebSocket -->
-<!-- Explication: Activation de la connexion WebSocket pour la mise à jour en temps réel -->
-<!-- ========================= -->
-<script src="/static/js/websocket_client.js"></script>
-<!-- ========================= -->
-<!-- Titre: Theme toggle -->
-<!-- Explication: Permet à l'utilisateur de choisir le mode sombre ou clair -->
-<!-- ========================= -->
-<script src="/static/js/theme_toggle.js"></script>
+    <!-- WebSocket pour la mise à jour en temps réel -->
+    <script src="/static/js/websocket_client.js"></script>
+    <!-- Theme toggle (mode sombre/clair) -->
+    <script src="/static/js/theme_toggle.js"></script>
     <script>
         initThemeToggle({
             darkCss: '/static/css/style_report_dark.css',

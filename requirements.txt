@@ -1,6 +1,8 @@
-sanic
 
-# Dépendances principales du projet
+# requirements.txt
+# Dépendances Python nécessaires pour l'application Canmore Incident Management
+
 flask
 flask-socketio
 requests
+sanic

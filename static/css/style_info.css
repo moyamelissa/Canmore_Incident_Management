@@ -1,6 +1,8 @@
-/* Feature cards vertical modern style */
+/*
+style_info.css
+Styles pour la page d'information de l'application Canmore Incident Management.
+*/
 
-/* Modern horizontal feature card row */
 .feature-cards-vertical {
 	display: flex;
 	flex-wrap: wrap;
@@ -16,7 +18,7 @@
 	box-sizing: border-box;
 }
 
- /* Full-width info container for info.html */
+ 
 .info-container {
 	background: #fff;
 	border-radius: 16px;
@@ -30,7 +32,7 @@
 	align-items: stretch;
 	min-height: 70vh;
 }
-/* Modern feature card style */
+
 .feature-card {
 	display: flex;
 	align-items: flex-start;
@@ -153,7 +155,6 @@ h1 {
 	font-size: 2.1em;
 	margin-bottom: 24px;
 }
-/* Removed duplicate/old .feature-card style. Use the modern card style above. */
 
 .search-bar#search-bar-container {
 	display: flex;

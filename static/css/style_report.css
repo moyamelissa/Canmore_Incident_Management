@@ -1,6 +1,8 @@
-/* ===============================
-	Styles extraits de report.html
-	=============================== */
+/*
+style_report.css
+Styles pour la page de rapport de l'application Canmore Incident Management.
+*/
+
 body { background: #f7f9fb; color: #222; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; }
 .dashboard-header { padding: 12px 32px 0 32px; }
 .summary-cards { display: flex; gap: 24px; margin-bottom: 24px; }

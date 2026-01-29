@@ -1,7 +1,10 @@
-// ...existing code...
-// === Gestion du mode admin ===
-// ===============================
-// Déconnexion administrateur
+/**
+ * map_incidents.js
+ * Gestion de l'affichage, du filtrage et du signalement des incidents sur la carte Leaflet
+ * Inclut la gestion du mode administrateur, le filtrage, et la soumission d'incidents.
+ */
+
+// Gestion du mode administrateur
 window.disableAdminMode = function() {
     window.isAdmin = false;
     localStorage.removeItem('isAdmin');
@@ -13,7 +16,7 @@ window.disableAdminMode = function() {
     }
     location.reload();
 };
-// --- Activation du mode admin ---
+// Activation du mode admin
 window.isAdmin = localStorage.getItem('isAdmin') === 'true';
 window.enableAdminMode = function() {
     const password = window.prompt('Entrez le mot de passe administrateur :');
@@ -38,7 +41,7 @@ window.enableAdminMode = function() {
     }
 };
 
-// Attacher l'écouteur d'événement au bouton admin après chargement du DOM
+// Initialisation du mode admin au chargement
 window.addEventListener('DOMContentLoaded', function() {
     // Déconnexion automatique de l'admin après 10 minutes (600000 ms)
     if (window.isAdmin) {
@@ -148,10 +151,7 @@ window.addEventListener('DOMContentLoaded', function() {
         updateAdminUI();
     }
 });
-// =======================================================
-// === Affichage et gestion des incidents sur la carte ===
-// =======================================================
-// Affiche tous les incidents existants sur la carte avec filtrage
+// Affichage et gestion des incidents sur la carte
 var incidentMarkers = [];
 function displayAllIncidents(map) {
     // Supprime les anciens marqueurs
@@ -160,7 +160,7 @@ function displayAllIncidents(map) {
     fetch('/api/incidents')
         .then(res => res.json())
         .then(incidents => {
-            // Lit les filtres cochés
+            // Lit les filtres cochés (résolu/non résolu)
             var showUnsolved = document.querySelector('.incident-filter[data-status="unsolved"]').checked;
             var showSolved = document.querySelector('.incident-filter[data-status="solved"]').checked;
             incidents.forEach(incident => {
@@ -182,7 +182,7 @@ function displayAllIncidents(map) {
                 var marker = L.marker([incident.latitude, incident.longitude], {icon: markerIcon}).addTo(map);
                 incidentMarkers.push(marker);
 
-                // Construit le HTML du popup
+                // Construit le HTML du popup pour chaque incident
                 var popupHtml = '<b>Incident signalé</b><br>' +
                     'Sujet : ' + (incident.type || '') + '<br>' +
                     'Détail : ' + (incident.description || '') + '<br>' +
@@ -269,18 +269,11 @@ function displayAllIncidents(map) {
             console.error('Erreur lors du chargement des incidents :', err); // Affiche l'erreur dans la console
         });
 }
-// ===============================
-// === Signalement d'un incident sur la carte (utilisateur) ===
-// ===============================
-// Permet à l'utilisateur de signaler un incident uniquement à l'intérieur de la limite de Canmore.
-// Utilise turf.js pour vérifier si le clic est dans la limite.
-
-// À inclure dans map.html :
-// <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+// Signalement d'un incident sur la carte (utilisateur)
 
 var canmoreBoundaryGeoJson = null; // Contient la géométrie de la limite de Canmore
 
-// Charge la limite de Canmore
+// Chargement de la limite de Canmore (GeoJSON)
 function loadCanmoreBoundary(url, callback) {
     fetch(url)
         .then(res => res.json())
@@ -319,6 +312,7 @@ function showIncidentForm(map, latlng) {
 
             var detailsOptions = `<option value="" disabled selected>Choisissez un détail</option>`;
 
+            // Formulaire HTML pour le signalement
             var formHtml = `
                 <form id="incident-comment-form">
                     <label for="incident-subject">Sujet :</label><br>
@@ -336,6 +330,7 @@ function showIncidentForm(map, latlng) {
                 .setContent(formHtml)
                 .openOn(map);
 
+            // Initialisation des éléments du formulaire après affichage
             setTimeout(function() {
                 var form = document.getElementById('incident-comment-form');
                 var subjectSelect = document.getElementById('incident-subject');
@@ -425,9 +420,7 @@ function showError(map, latlng) {
         .openOn(map);
 }
 
-// ===============================
-// === Initialisation après chargement de la carte ===
-// ===============================
+// Initialisation après chargement de la carte
 function setupIncidentReporting(map) {
     // Affiche tous les incidents existants au chargement de la carte
     displayAllIncidents(map);
@@ -439,6 +432,7 @@ function setupIncidentReporting(map) {
         });
     });
 
+    // Gestion du clic sur la carte pour signaler un incident ou afficher une erreur
     map.on('click', function(e) {
         if (isInsideCanmore(e.latlng)) {
             showIncidentForm(map, e.latlng);

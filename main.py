@@ -1,7 +1,11 @@
- # =========================
-# Titre: Importations
-# Explication: Importation des modules nécessaires pour Flask et les routes de l'application
 
+"""
+main.py
+Ce script initialise et lance l'application Flask Canmore Incident Management.
+Il configure les blueprints (routes), les APIs, et démarre le serveur en mode développement.
+"""
+
+# Importation des modules nécessaires pour Flask et les routes de l'application
 from flask import Flask, session, redirect, request, url_for
 from server.routes.home_route import home_bp  # Page d'accueil
 from server.routes.map_route import map_bp    # Page de la carte
@@ -10,22 +14,15 @@ from server.routes.incident_types import incident_types_bp  # Types d'incidents
 from server.routes.incidents_api import incidents_api  # API incidents
 from server.routes.user_settings_api import user_settings_api  # API paramètres utilisateur
 
+# Initialisation de l'application principale Flask
 
-# =========================
-# Titre: Configuration de l'application Flask
-# Explication: Initialisation de l'application principale Flask
-
-
+# Configuration de la clé secrète pour la gestion des sessions Flask
+# (À remplacer par une valeur plus sécurisée en production)
+import secrets
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(32)
 
-
-
-# =========================
-# Titre: Enregistrement des blueprints
-# Explication: Ajout des blueprints (routes) à l'application Flask
-
-
-
+# Enregistrement des blueprints (routes) dans l'application Flask
 from server.routes.info_route import info_bp  # Page d'informations
 app.register_blueprint(home_bp)              # Accueil
 app.register_blueprint(map_bp)               # Carte
@@ -35,11 +32,6 @@ app.register_blueprint(incidents_api)        # API incidents
 app.register_blueprint(user_settings_api)    # API paramètres utilisateur
 app.register_blueprint(info_bp)              # Informations
 
-
-
-
-# =========================
-# Titre: Lancement de l'application
-# Explication: Démarrage du serveur Flask (en mode debug pour le développement)
+# Démarrage du serveur Flask (en mode debug pour le développement)
 if __name__ == "__main__":
     app.run(debug=True)

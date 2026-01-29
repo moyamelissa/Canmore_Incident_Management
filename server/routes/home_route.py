@@ -1,16 +1,16 @@
-# =========================
-# Importations
-# Explication: Importation des modules nécessaires pour Flask
+'''
+home_route.py
+Ce module définit la route Flask pour la page d'accueil de l'application Canmore Incident Management.
+'''
+
 from flask import Blueprint, render_template
 
-# =========================
-# Définition du Blueprint
-# Explication: Création d'un blueprint pour la page d'accueil
+# Création d'un blueprint pour la page d'accueil
 home_bp = Blueprint('home', __name__)
 
-# =========================
-# Route pour la page d'accueil
-# Explication: Définit la route qui affiche la page home.html
 @home_bp.route('/')
 def home():
+    '''
+    Affiche la page d'accueil (home.html).
+    '''
     return render_template('home.html')

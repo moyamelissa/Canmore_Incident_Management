@@ -1,8 +1,15 @@
-// Simple WebSocket client example
+
+/**
+ * websocket_client.js
+ * Client WebSocket pour la mise à jour en temps réel de l'application.
+ */
+
+// Connexion WebSocket au serveur
 const ws = new WebSocket('ws://localhost:8001/ws');
 
+
+// Affiche un message lors de la connexion WebSocket
 ws.onopen = function() {
-    // Affiche un message flottant en bas à droite lors de la connexion WebSocket
     const wsMsg = document.createElement('div');
     wsMsg.textContent = 'Connexion WebSocket établie';
     wsMsg.style.position = 'fixed';
@@ -21,13 +28,13 @@ ws.onopen = function() {
 };
 
 
+
+// Réception d'un message : déclenche la mise à jour en temps réel
 ws.onmessage = function(event) {
     console.log('Received:', event.data);
-    // Live update for map.html
     if (typeof window.displayAllIncidents === 'function' && window.map) {
         displayAllIncidents(window.map);
     }
-    // Live update for report.html
     if (typeof updateTable === 'function' && typeof updateSummary === 'function') {
         fetch('/api/incidents')
             .then(res => res.json())
@@ -39,8 +46,9 @@ ws.onmessage = function(event) {
     }
 };
 
+
+// Affiche un message si la connexion WebSocket est perdue
 ws.onclose = function() {
-    // Affiche un message d'erreur si la connexion WebSocket est perdue ou impossible
     const wsErr = document.createElement('div');
     wsErr.textContent = 'Connexion WebSocket échouée : la mise à jour en temps réel est désactivée.';
     wsErr.style.position = 'fixed';

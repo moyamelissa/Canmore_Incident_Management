@@ -1,15 +1,19 @@
 
-// =========================
-// Titre : Gestion du menu déroulant
-// Explication : Script réutilisable pour ouvrir/fermer un menu déroulant au clic et le fermer en cliquant ailleurs.
-// =========================
+/**
+ * dropdown_menu.js
+ * Gestion des menus déroulants pour l'application Canmore Incident Management.
+ */
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    
+    // Initialisation des événements sur les menus déroulants
+
     // Pour chaque déclencheur de menu déroulant
     document.querySelectorAll('.dropdown-toggle').forEach(function(trigger) {
         trigger.addEventListener('click', function(e) {
             e.preventDefault();
-            // Ferme tous les autres menus déroulants
+            // Ferme tous les autres menus déroulants ouverts
             document.querySelectorAll('.dropdown-content').forEach(function(content) {
                 if (content !== trigger.nextElementSibling) {
                     content.classList.remove('show');
@@ -23,8 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Ferme les menus déroulants en cliquant à l'extérieur
+    // Gestion du clic extérieur pour fermer les menus déroulants
+
     document.addEventListener('click', function(e) {
+        // Si le clic n'est pas dans un menu déroulant, on ferme tous les menus
         if (!e.target.closest('.dropdown')) {
             document.querySelectorAll('.dropdown-content').forEach(function(content) {
                 content.classList.remove('show');

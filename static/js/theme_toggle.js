@@ -1,18 +1,13 @@
-// theme_toggle.js
-// Universal theme (dark mode) toggle logic for any page
-// Usage: call initThemeToggle({
-//   darkCss: '/static/css/style_map_dark.css',
-//   storageKey: 'darkMode',
-//   icon: '/static/icons/setting.png',
-//   iconClass: 'music-icon-modern',
-//   defaultMode: 'light',
-// })
+
+/**
+ * theme_toggle.js
+ * Gestion universelle du mode sombre (dark mode) et des préférences utilisateur.
+ */
 
 function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'light'}) {
-    // Use a global key for all pages
+    // Création du bouton paramètres et du modal si absents
     storageKey = 'darkModeGlobal';
     document.addEventListener('DOMContentLoaded', function() {
-        // Create settings button if not present
         let settingsBtn = document.getElementById('settings-btn');
         if (!settingsBtn) {
             settingsBtn = document.createElement('button');
@@ -24,7 +19,7 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
             settingsBtn.style.marginLeft = '18px';
             settingsBtn.style.verticalAlign = 'middle';
             settingsBtn.style.position = 'absolute';
-            settingsBtn.style.top = '22px'; // Nudged up for closer alignment
+            settingsBtn.style.top = '22px';
             settingsBtn.style.right = '24px';
             settingsBtn.style.zIndex = '10001';
             let img = document.createElement('img');
@@ -33,22 +28,19 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
             img.className = iconClass;
             img.style.width = '28px';
             img.style.height = '28px';
-            // Set icon color based on theme
             function updateIconColor() {
                 if (document.body.classList.contains('dark-mode')) {
-                    img.style.filter = 'invert(1)'; // white in dark mode
+                    img.style.filter = 'invert(1)';
                 } else {
-                    img.style.filter = 'invert(0)'; // black in light mode
+                    img.style.filter = 'invert(0)';
                 }
             }
             updateIconColor();
             settingsBtn.appendChild(img);
             document.body.appendChild(settingsBtn);
-            // Listen for theme changes
             const observer = new MutationObserver(updateIconColor);
             observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
         }
-        // Create modal if not present
         let settingsModal = document.getElementById('settings-modal');
         if (!settingsModal) {
             settingsModal = document.createElement('div');
@@ -106,6 +98,8 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
         var closeSettings = document.getElementById('close-settings');
         var darkToggle = document.getElementById('darkmode-toggle');
         var darkLink = null;
+
+        // Gestion du mode sombre (activation/désactivation)
         function setDarkMode(on) {
             if (on) {
                 if (!darkLink) {
@@ -116,7 +110,6 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
                 }
                 document.body.classList.add('dark-mode');
                 localStorage.setItem(storageKey, 'true');
-                // Save to backend
                 fetch('/save_user_settings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -132,7 +125,6 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
                 }
                 document.body.classList.remove('dark-mode');
                 localStorage.setItem(storageKey, 'false');
-                // Save to backend
                 fetch('/save_user_settings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -140,7 +132,8 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
                 });
             }
         }
-        // Initialisation
+
+        // Initialisation de l'état du mode sombre
         if (localStorage.getItem(storageKey) === 'true') {
             darkToggle.checked = true;
             setDarkMode(true);
@@ -151,6 +144,8 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
             darkToggle.checked = false;
             setDarkMode(false);
         }
+
+        // Gestion des interactions utilisateur
         settingsBtn.addEventListener('click', function() {
             settingsModal.style.display = 'flex';
         });
