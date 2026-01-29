@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Portail d’information de Canmore</title>
+    <link rel="stylesheet" href="/static/css/style_info.css">
+    <link rel="stylesheet" href="/static/css/style_report.css">
+    <link rel="stylesheet" href="/static/css/style_info_dark.css" id="dark-css" disabled>
+    <script src="/static/js/theme_toggle.js"></script>
+    <script>
+      initThemeToggle({
+        darkCss: '/static/css/style_info_dark.css',
+        storageKey: 'darkModeInfo',
+        icon: '/static/icons/setting.png',
+        iconClass: '',
+        defaultMode: 'light'
+      });
+    </script>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div style="display:flex;align-items:center;gap:18px;">
+            <a href="/" class="back-btn" title="Accueil" style="padding:4px 8px;display:flex;align-items:center;justify-content:center;width:40px;height:40px;">
+                <img src="/static/icons/back.png" alt="Retour" style="width:24px;height:24px;display:block;">
+            </a>
+            <h1 style="margin:0;font-size:2em;">Portail d’information de Canmore</h1>
+        </div>
+    </div>
+    <div id="feature-cards" class="feature-cards-vertical" style="margin-bottom:32px;">
+        <div class="feature-card" data-type="parcs">
+            <img src="/static/icons/parcs.png" alt="Parcs" class="feature-icon">
+            <div class="feature-title">Parcs</div>
+            <div class="feature-desc">Trouvez un parc de Canmore</div>
+        </div>
+        <div class="feature-card" data-type="buildings">
+            <img src="/static/icons/buildings.png" alt="Bâtiments" class="feature-icon">
+            <div class="feature-title">Bâtiments</div>
+            <div class="feature-desc">Recherchez un bâtiment public</div>
+        </div>
+        <div class="feature-card" data-type="trails">
+            <img src="/static/icons/trails.png" alt="Sentiers" class="feature-icon">
+            <div class="feature-title">Sentiers</div>
+            <div class="feature-desc">Explorez les sentiers de la ville</div>
+        </div>
+        <div class="feature-card" data-type="sports_fields">
+            <img src="/static/icons/sports_fields.png" alt="Terrains de sport" class="feature-icon">
+            <div class="feature-title">Terrains de sport</div>
+            <div class="feature-desc">Trouvez un terrain de sport</div>
+        </div>
+        <div class="feature-card" data-type="addresses">
+            <img src="/static/icons/addresses.png" alt="Adresses" class="feature-icon">
+            <div class="feature-title">Adresses</div>
+            <div class="feature-desc">Recherchez une adresse précise</div>
+        </div>
+    </div>
+    <div class="search-bar" id="search-bar-container" style="display:none;">
+        <input type="text" id="search-input" placeholder="Commencez à taper...">
+        <button id="search-btn">Rechercher</button>
+    </div>
+    <div id="suggestions"></div>
+    <div id="result"></div>
+    <script>
+    // CSV config for each feature
+    const csvConfig = {
+        parcs: { file: '/static/data/parcs.csv', key: 'PARK_NAME', label: 'Nom du parc', fields: ['PARK_NAME','FID','Shape_area','Shape_len'] },
+        buildings: { file: '/static/data/buildings.csv', key: 'FAC_NAME', label: 'Nom du bâtiment', fields: ['FID','FAC_TYPE','FAC_NAME'] },
+        trails: { file: '/static/data/trails.csv', key: 'NAME1', label: 'Nom du sentier', fields: ['FID','NAME1','WIDTH','MATERIAL','Shape_len'] },
+        sports_fields: { file: '/static/data/sports_fields.csv', key: 'Location', label: 'Nom ou emplacement du terrain', fields: ['FID','Location','Shape_area','Shape_len'] },
+        addresses: { file: '/static/data/Addresses.csv', key: 'FullCivicA', label: 'Adresse complète', fields: ['FullCivicA','FID','UnitNumber','AddressNum','StreetName'] }
+    };
+    let dataCache = {};
+    let currentType = null;
+    // Parse CSV
+    function parseCSV(text) {
+        const lines = text.trim().split('\n');
+        const headers = lines[0].split(',');
+        return lines.slice(1).map(line => {
+            const values = line.split(',');
+            let obj = {};
+            headers.forEach((h, i) => obj[h.trim()] = values[i] ? values[i].trim() : '');
+            return obj;
+        });
+    }
+    // Load and sort data for a type
+    function loadData(type, callback) {
+        if (dataCache[type]) { callback(dataCache[type]); return; }
+        fetch(csvConfig[type].file)
+            .then(res => res.text())
+            .then(text => {
+                let arr = parseCSV(text);
+                arr.sort((a, b) => a[csvConfig[type].key].localeCompare(b[csvConfig[type].key]));
+                dataCache[type] = arr;
+                callback(arr);
+            });
+    }
+    // Binary search for exact match
+    function binarySearch(arr, key, target) {
+        let left = 0, right = arr.length - 1;
+        target = target.toUpperCase();
+        while (left <= right) {
+            let mid = Math.floor((left + right) / 2);
+            let cmp = arr[mid][key].toUpperCase().localeCompare(target);
+            if (cmp === 0) return arr[mid];
+            if (cmp < 0) left = mid + 1;
+            else right = mid - 1;
+        }
+        return null;
+    }
+    // Linear search for partial matches
+    function partialSearch(arr, key, query) {
+        query = query.toUpperCase();
+        return arr.filter(row => row[key].toUpperCase().startsWith(query));
+    }
+    // Feature card click
+    document.querySelectorAll('.feature-card').forEach(card => {
+        card.onclick = function() {
+            currentType = this.getAttribute('data-type');
+            document.getElementById('search-bar-container').style.display = '';
+            document.getElementById('search-input').placeholder = 'Commencez à taper ' + csvConfig[currentType].label.toLowerCase() + '...';
+            document.getElementById('suggestions').innerHTML = '';
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('search-input').value = '';
+        };
+    });
+    // Show suggestions as user types
+    document.getElementById('search-input').addEventListener('input', function() {
+        let query = this.value.trim();
+        let suggestionsDiv = document.getElementById('suggestions');
+        let resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '';
+        if (!query || !currentType) { suggestionsDiv.innerHTML = ''; return; }
+        loadData(currentType, arr => {
+            let matches = partialSearch(arr, csvConfig[currentType].key, query).slice(0, 10);
+            if (matches.length) {
+                suggestionsDiv.innerHTML = '<ul style="list-style:none;padding:0;">' +
+                    matches.map(m => `<li style='padding:4px 0;cursor:pointer;' onclick='selectSuggestion("${m[csvConfig[currentType].key].replace(/"/g, '&quot;')}")'>${m[csvConfig[currentType].key]}</li>`).join('') + '</ul>';
+            } else {
+                suggestionsDiv.innerHTML = '<div class="not-found">Aucune suggestion trouvée.</div>';
+            }
+        });
+    });
+    // Select suggestion
+    window.selectSuggestion = function(val) {
+        document.getElementById('search-input').value = val;
+        document.getElementById('suggestions').innerHTML = '';
+        document.getElementById('search-btn').click();
+    }
+    // Search button click
+    document.getElementById('search-btn').onclick = function() {
+        let query = document.getElementById('search-input').value.trim();
+        if (!query || !currentType) return;
+        loadData(currentType, arr => {
+            let found = binarySearch(arr, csvConfig[currentType].key, query);
+            let resultDiv = document.getElementById('result');
+            if (found) {
+                let html = `<div class='info-card'>`;
+                if(currentType === 'parcs') {
+                    // Determine size category based on Shape_len
+                    let len = parseFloat(found['Shape_len']);
+                    let size = 'Petit';
+                    if(len > 1200) size = 'Grand';
+                    else if(len > 700) size = 'Moyen';
+                    html += `<b>Nom :</b> ${found['PARK_NAME']}<br>`;
+                    html += `<b>Catégorie :</b> ${size} parc<br>`;
+                    html += `<b>Longueur :</b> ${found['Shape_len']} m<br>`;
+                    html += `<b>Superficie :</b> ${found['Shape_area']} m²<br>`;
+                } else if(currentType === 'buildings') {
+                    html += `<b>FID :</b> ${found['FID']}<br>`;
+                    html += `<b>Type de bâtiment :</b> ${found['FAC_TYPE']}<br>`;
+                    html += `<b>Nom de la facilité :</b> ${found['FAC_NAME']}<br>`;
+                } else if(currentType === 'trails') {
+                    html += `<b>FID :</b> ${found['FID']}<br>`;
+                    html += `<b>Nom du sentier :</b> ${found['NAME1'] || '(non nommé)'}<br>`;
+                    html += `<b>Largeur :</b> ${found['WIDTH'] || 'N/A'} m<br>`;
+                    html += `<b>Matériau :</b> ${found['MATERIAL'] || 'N/A'}<br>`;
+                    html += `<b>Longueur :</b> ${found['Shape_len'] || 'N/A'} m<br>`;
+                } else if(currentType === 'sports_fields') {
+                    html += `<b>FID :</b> ${found['FID']}<br>`;
+                    html += `<b>Emplacement :</b> ${found['Location']}<br>`;
+                    html += `<b>Superficie :</b> ${found['Shape_area']} m²<br>`;
+                    html += `<b>Longueur :</b> ${found['Shape_len']} m<br>`;
+                } else {
+                    csvConfig[currentType].fields.forEach(f => {
+                        html += `<b>${f} :</b> ${found[f] || ''}<br>`;
+                    });
+                }
+                html += `</div>`;
+                resultDiv.innerHTML = html;
+            } else {
+                resultDiv.innerHTML = `<div class='not-found'>Aucun résultat exact trouvé pour \"${query}\".</div>`;
+            }
+        });
+    }
+    </script>
+</body>
+</html>

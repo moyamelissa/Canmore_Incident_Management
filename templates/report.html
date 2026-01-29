@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport des incidents</title>
+    <!-- ========================= -->
+    <!-- Titre: Feuilles de style et bibliothèques -->
+    <!-- Explication: Inclusion des feuilles de style et bibliothèques nécessaires -->
+    <!-- ========================= -->
+    <link rel="stylesheet" href="/static/css/style_report.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Styles déplacés dans static/css/style_report.css -->
+</head>
+<body>
+    <!-- ========================= -->
+    <!-- Titre: En-tête du tableau de bord -->
+    <!-- Explication: Affichage des statistiques et navigation -->
+    <!-- ========================= -->
+    <div class="dashboard-header">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:18px;">
+                <a href="/" class="back-btn" title="Accueil" style="padding:4px 8px;display:flex;align-items:center;justify-content:center;width:40px;height:40px;">
+                    <img src="/static/icons/back.png" alt="Retour" style="width:24px;height:24px;display:block;">
+                </a>
+                <h1 style="margin:0;font-size:2em;">Rapport des incidents</h1>
+            </div>
+            <button class="export-btn" id="export-btn" style="margin-left:0;margin-right:48px;">Export CSV</button>
+        </div>
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="label">Incidents résolus</div>
+                <div class="value" id="resolved-count">0</div>
+                <div class="sub">Résolus</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Incidents non résolus</div>
+                <div class="value" id="unresolved-count">0</div>
+                <div class="sub red">Non résolus</div>
+            </div>
+            <div class="summary-card">
+                <div class="label">Total incidents</div>
+                <div class="value" id="total-count">0</div>
+                <div class="sub gray">Total</div>
+            </div>
+        </div>
+    </div>
+    <!-- ========================= -->
+    <!-- Titre: Contenu principal -->
+    <!-- Explication: Recherche, tableau des incidents et export -->
+    <!-- ========================= -->
+    <div class="main-content">
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Rechercher par type, description, statut...">
+        </div>
+        <div class="table-container">
+            <table id="incident-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be filled by JS -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <!-- ========================= -->
+    <!-- Titre: Scripts de gestion des incidents -->
+    <!-- Explication: Chargement, affichage, filtrage et export des incidents -->
+    <!-- ========================= -->
+    <script>
+    // =========================
+    // Titre: Chargement et affichage des incidents
+    // Explication: Récupère les incidents depuis l'API et met à jour le tableau et les cartes de résumé
+    // =========================
+    let allIncidents = [];
+    fetch('/api/incidents')
+        .then(res => res.json())
+        .then(data => {
+            allIncidents = data;
+            updateTable(data);
+            updateSummary(data);
+        });
+
+    // =========================
+    // Titre: Fonction d'affichage du tableau
+    // Explication: Affiche les incidents dans le tableau avec statut en français et date normalisée
+    // =========================
+    function updateTable(data) {
+        const tbody = document.querySelector('#incident-table tbody');
+        tbody.innerHTML = data.map(inc => {
+            let statusClass = '';
+            let statusFr = inc.status;
+            if (inc.status === 'solved' || inc.status === 'résolu') {
+                statusClass = 'paid';
+                statusFr = 'résolu';
+            } else if (inc.status === 'unsolved' || inc.status === 'non résolu') {
+                statusClass = 'outstanding';
+                statusFr = 'non résolu';
+            } else {
+                statusClass = 'pending';
+            }
+            // Normaliser la date au format AAAA-MM-JJ
+            let dateOnly = inc.timestamp ? inc.timestamp.split('T')[0] : '';
+            return `<tr><td>${inc.id}</td><td>${inc.type}</td><td>${inc.description}</td><td>${dateOnly}</td><td class="status ${statusClass}">${statusFr}</td></tr>`;
+        }).join('');
+    }
+
+    // =========================
+    // Titre: Mise à jour des cartes de résumé
+    // Explication: Calcule et affiche le nombre d'incidents résolus, non résolus et total
+    // =========================
+    function updateSummary(data) {
+        let resolved = 0, unresolved = 0;
+        data.forEach(inc => {
+            if (inc.status === 'solved' || inc.status === 'résolu') resolved++;
+            else unresolved++;
+        });
+        document.getElementById('resolved-count').textContent = resolved;
+        document.getElementById('unresolved-count').textContent = unresolved;
+        document.getElementById('total-count').textContent = data.length;
+    }
+
+    // =========================
+    // Titre: Recherche et filtrage
+    // Explication: Permet de filtrer le tableau par type, description, statut ou date
+    // =========================
+    document.getElementById('search-input').addEventListener('input', function() {
+        const val = this.value.toLowerCase().trim();
+        updateTable(allIncidents.filter(inc => {
+            let dateOnly = inc.timestamp ? inc.timestamp.split('T')[0] : '';
+            let status = (inc.status || '').toString().toLowerCase().trim();
+            // Statut en français
+            let statusFr = '';
+            if (status === 'solved' || status === 'résolu') statusFr = 'résolu';
+            else if (status === 'unsolved' || status === 'non résolu') statusFr = 'non résolu';
+            else statusFr = status;
+            // Statut en anglais
+            let statusEn = '';
+            if (status === 'solved' || status === 'résolu') statusEn = 'solved';
+            else if (status === 'unsolved' || status === 'non résolu') statusEn = 'unsolved';
+            else statusEn = status;
+            // Recherche intelligente sur le statut
+            let matchStatus = false;
+            if (val) {
+                matchStatus = statusFr.startsWith(val) || statusEn.startsWith(val);
+            }
+            return (
+                (inc.type || '').toString().toLowerCase().includes(val) ||
+                (inc.description || '').toString().toLowerCase().includes(val) ||
+                matchStatus ||
+                dateOnly.includes(val)
+            );
+        }));
+    });
+
+    // =========================
+    // Titre: Export CSV
+    // Explication: Permet d'exporter les incidents affichés au format CSV
+    // =========================
+    document.getElementById('export-btn').addEventListener('click', function() {
+        let csv = 'ID,Type,Description,Date,Statut\n';
+        allIncidents.forEach(inc => {
+            csv += `${inc.id},"${inc.type.replace(/"/g,'""')}","${inc.description.replace(/"/g,'""')}",${inc.timestamp},${inc.status}\n`;
+        });
+        const blob = new Blob([csv], {type: 'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'incidents.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+</script>
+<!-- ========================= -->
+<!-- Titre: WebSocket -->
+<!-- Explication: Activation de la connexion WebSocket pour la mise à jour en temps réel -->
+<!-- ========================= -->
+<script src="/static/js/websocket_client.js"></script>
+<!-- ========================= -->
+<!-- Titre: Theme toggle -->
+<!-- Explication: Permet à l'utilisateur de choisir le mode sombre ou clair -->
+<!-- ========================= -->
+<script src="/static/js/theme_toggle.js"></script>
+    <script>
+        initThemeToggle({
+            darkCss: '/static/css/style_report_dark.css',
+            storageKey: 'darkModeReport',
+            icon: '/static/icons/setting.png',
+            iconClass: 'music-icon-modern',
+            defaultMode: 'light'
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+/*
+=========================
+ Titre : Style de la page d'accueil
+ Explication : Feuille de style CSS pour la mise en forme et l'apparence de la page d'accueil de l'application Canmore Incident Management.
+=========================
+*/
+.footer-global {
+	position: fixed;
+	bottom: 4px;
+	right: 8px;
+	font-size: 0.95rem;
+	color: #888;
+	z-index: 100;
+	background: none;
+}
+.top-bar-global {
+	position: fixed;
+	top: 18px;
+	right: 32px;
+	z-index: 100;
+}
+.right-panel {
+	position: relative;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)), url("../icons/leaf.png") no-repeat center center;
+	background-size: 80% auto;
+	min-height: 100vh;
+	overflow: hidden;
+}
+
+.background-icon {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 0;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.bg-leaf {
+	width: 70%;
+	max-width: 500px;
+	opacity: 0.08;
+	filter: blur(0.5px);
+	object-fit: contain;
+	user-select: none;
+}
+
+.right-panel > *:not(.background-icon) {
+	position: relative;
+	z-index: 1;
+}
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: 'Montserrat', Arial, sans-serif;
+	box-sizing: border-box;
+	background: #fffaf7;
+}
+
+.container {
+	display: flex;
+	height: 100vh;
+	width: 100vw;
+}
+
+.left-panel {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f5f5f5;
+	height: 100%;
+	overflow: hidden;
+}
+
+.img-box {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.main-img {
+	width: 100%;
+	height: 100vh;
+	object-fit: cover;
+	display: block;
+}
+
+.right-panel {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)), url("../icons/leaf.png") no-repeat center center;
+	background-size: 80% auto;
+	min-height: 100vh;
+	position: relative;
+	overflow: hidden;
+}
+
+.right-panel::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: inherit;
+	opacity: 0.03;
+	z-index: 0;
+	pointer-events: none;
+}
+.right-panel > * {
+	position: relative;
+	z-index: 1;
+}
+
+.top-bar {
+	position: absolute;
+	top: 30px;
+	right: 40px;
+	z-index: 2;
+}
+
+.lang-btn {
+	padding: 6px 18px;
+	border-radius: 6px;
+	border: 1px solid #333;
+	background: #f9f9f9;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.title {
+	margin-top: 60px;
+	font-family: 'Merriweather', serif;
+	font-size: 2.8rem;
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: 1px;
+	text-align: left;
+	margin-bottom: 0.5rem;
+}
+.title-main {
+	display: block;
+	font-family: 'Merriweather', serif;
+	font-size: 2.2rem;
+	font-weight: 700;
+	color: #222;
+}
+.title-accent {
+	display: block;
+	font-family: 'Merriweather', serif;
+	font-size: 2.8rem;
+	font-weight: 700;
+	color: #f2994a;
+	margin-top: 0.1em;
+}
+.intro-text {
+	font-style: italic;
+	margin-top: 10px;
+	color: #444;
+	font-size: 1.15rem;
+	font-family: 'Montserrat', Arial, sans-serif;
+	margin-bottom: 2.5rem;
+	max-width: 420px;
+	text-align: left;
+}
+
+.button-group {
+	margin: 40px 0 0 0;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.main-btn {
+	padding: 16px 36px;
+	border: 2px solid #222;
+	border-radius: 8px;
+	background: #fff;
+	font-size: 1.15rem;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: none;
+	color: #222;
+	transition: background 0.2s, color 0.2s;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+}
+.main-btn:hover {
+	background: #222;
+	color: #fff;
+}
+.main-btn-large {
+	font-size: 1.25rem;
+	padding: 20px 54px;
+}
+.chevron {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-left: 8px;
+	color: #f2994a;
+	transition: margin-left 0.2s;
+}
+.main-btn:hover .chevron {
+	margin-left: 16px;
+}
+
+.footer {
+	position: absolute;
+	bottom: 30px;
+	right: 40px;
+	font-size: 0.95rem;
+	color: #888;
+	z-index: 2;
+}
+
+.footer-absolute {
+	position: absolute;
+	bottom: 8px;
+	right: 16px;
+	font-size: 0.95rem;
+	color: #888;
+	z-index: 10;
+	background: none;
+}

@@ -1,0 +1,6 @@
+sanic
+
+# Dépendances principales du projet
+flask
+flask-socketio
+requests

@@ -1,0 +1,41 @@
+<!-- =========================
+     Titre: En-tête du document
+     Explication: Métadonnées et liens CSS
+========================= -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des incidents de Canmore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_home.css') }}">
+</head>
+<body>
+    <!-- =========================
+         Titre: Contenu principal
+         Explication: Structure de la page d'accueil avec panneau gauche (image) et panneau droit (texte et boutons)
+    ========================= -->
+    <div class="container">
+        <div class="left-panel">
+            <div class="img-box">
+                <img src="{{ url_for('static', filename='img/home.jpg') }}" alt="Home Image" class="main-img">
+            </div>
+        </div>
+        <div class="right-panel">
+            <h1 class="title">
+                <span class="title-main">Gestion des incidents de</span>
+                <span class="title-accent">Canmore</span>
+            </h1>
+            <p class="intro-text">Contribuez à garder Canmore sécuritaire en signalant les problèmes et en suivant leur résolution.</p>
+            <div class="button-group">
+                <a href="{{ url_for('map.map') }}" class="main-btn main-btn-large">Carte interactive <span class="chevron">&gt;</span></a>
+                <a href="{{ url_for('report.report') }}" class="main-btn main-btn-large">Rapport d'incident <span class="chevron">&gt;</span></a>
+                <a href="{{ url_for('info.info') }}" class="main-btn main-btn-large">Recherche d'adresse <span class="chevron">&gt;</span></a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

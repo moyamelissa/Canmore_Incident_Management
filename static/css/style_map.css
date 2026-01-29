@@ -1,0 +1,376 @@
+/* ===============================
+   Styles extraits de map.html
+   =============================== */
+.back-icon-modern {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: auto;
+	height: auto;
+	border-radius: 0;
+	background: none !important;
+	box-shadow: none !important;
+	transition: none;
+	margin-right: 0;
+	padding: 0;
+}
+.back-icon-modern:hover {
+	background: none !important;
+	box-shadow: none !important;
+}
+.back-icon-modern img.menu-logo-modern {
+	width: 28px;
+	height: 28px;
+	border-radius: 0;
+	box-shadow: none;
+	background: none;
+	opacity: 0.45;
+	transition: opacity 0.2s, filter 0.2s;
+}
+.back-icon-modern img.menu-logo-modern:hover {
+	opacity: 0.85;
+	filter: drop-shadow(0 1px 4px #0001);
+}
+.music-icon-modern {
+	width: 32px;
+	height: 32px;
+	cursor: pointer;
+	opacity: 0.45;
+	transition: opacity 0.2s, filter 0.2s;
+}
+.music-icon-modern:hover {
+	opacity: 0.85;
+	filter: drop-shadow(0 1px 4px #0001);
+}
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: 24px;
+}
+.switch input {display:none;}
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background-color: #ccc;
+	transition: .4s;
+	border-radius: 24px;
+}
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 18px;
+	width: 18px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: .4s;
+	border-radius: 50%;
+}
+input:checked + .slider {
+	background-color: #4CAF50;
+}
+input:checked + .slider:before {
+	transform: translateX(20px);
+}
+.top-menu-modern {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0 32px;
+	height: 64px;
+	border-radius: 0 0 18px 18px;
+	box-shadow: 0 2px 12px #0002;
+	margin-bottom: 12px;
+}
+.menu-left-modern {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+}
+.menu-logo-modern {
+	width: 38px;
+	height: 38px;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 1px 4px #0001;
+}
+.menu-title-modern {
+	font-size: 1.4em;
+	font-weight: 600;
+	color: #23272b;
+	letter-spacing: 0.5px;
+}
+.menu-center-modern {
+	display: flex;
+	align-items: center;
+	gap: 32px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.menu-right-modern {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	position: relative;
+}
+.admin-link {
+	color: #333 !important;
+	font-weight: 500;
+	text-decoration: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	transition: background 0.2s, color 0.2s;
+	background: none;
+}
+.admin-link:hover {
+	background: #f5f5f5 !important;
+	color: #23272b !important;
+}
+.param-btn {
+	background: #1abc9c;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 8px 18px;
+	font-size: 1em;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.param-btn:hover {
+	background: #159c85;
+}
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+.dropdown-toggle {
+	color: #333 !important;
+	font-weight: 500;
+	cursor: pointer;
+	padding: 8px 16px;
+	border-radius: 6px;
+	transition: background 0.2s, color 0.2s;
+	display: inline-block;
+}
+.menu-center-modern .dropdown-toggle {
+	color: #333 !important;
+}
+.dropdown-toggle:hover {
+	background: #f5f5f5 !important;
+	color: #23272b !important;
+	box-shadow: none !important;
+	border: none !important;
+}
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background: #fff;
+	min-width: 180px;
+	box-shadow: 0 2px 8px #0002;
+	border-radius: 8px;
+	padding: 10px 14px;
+	z-index: 1000;
+	top: 110%;
+	left: 0;
+}
+.dropdown.show .dropdown-content,
+.dropdown-content.show {
+	display: block;
+}
+.dropdown-content label {
+	color: #23272b;
+	font-size: 1em;
+	margin-bottom: 6px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+/*
+=========================
+ Titre : Style de la page carte
+ Explication : Feuille de style CSS pour la mise en forme et l'apparence de la page de la carte interactive de l'application Canmore Incident Management.
+=========================
+*/
+
+.leaflet-popup-content select {
+	max-width: 220px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.dropdown {
+	position: relative;
+}
+.dropdown-content {
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	background: rgba(255,255,255,0.92);
+	backdrop-filter: blur(4px);
+	min-width: 200px;
+	box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10);
+	border-radius: 12px;
+	border: 1px solid #e0e0e0;
+	z-index: 1001;
+	padding: 16px 20px;
+}
+.dropdown-content label {
+	color: #23272b;
+	font-size: 1em;
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	display: block;
+	margin-bottom: 8px;
+}
+.dropdown-content input[type="checkbox"] {
+	margin-right: 8px;
+}
+.dropdown .dropdown-toggle {
+	color: #23272b;
+	text-decoration: none;
+	font-size: 1rem;
+	padding: 8px 16px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.2s, color 0.2s;
+	display: inline-block;
+	background: rgba(255,255,255,0.85);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+	border: 1px solid #e0e0e0;
+}
+.dropdown .dropdown-toggle:hover {
+	background: #f5f5f5;
+	color: #f2994a;
+	box-shadow: 0 2px 12px rgba(242,153,74,0.08);
+}
+.dropdown-content.show {
+	display: block;
+}
+/* Menu Logo Styles */
+.menu-logo {
+	height: 24px;
+	width: 24px;
+	margin-right: 10px;
+}
+
+body, html {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.top-menu {
+	width: 100%;
+	background: #fff;
+	color: #222;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border: 4px solid #222;
+	box-sizing: border-box;
+	height: 64px;
+	padding: 0 24px;
+}
+.top-menu ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+}
+.top-menu li {
+	margin: 0;
+}
+.top-menu a {
+	display: block;
+	padding: 16px 24px;
+	color: #fff;
+	text-decoration: none;
+	transition: background 0.2s;
+}
+.top-menu a:hover {
+	background: #444;
+}
+
+/* Additional styles for menu alignment */
+.menu-left, .menu-center, .menu-right {
+	display: flex;
+	align-items: center;
+}
+.menu-center {
+	flex-direction: row;
+	gap: 48px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+/* Menu Logo Styles */
+.menu-logo {
+	height: 24px;
+	width: 24px;
+	margin-right: 10px;
+}
+
+body, html {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.top-menu {
+	width: 100%;
+	background: #333;
+	color: #fff;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+}
+.top-menu ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+}
+.top-menu li {
+	margin: 0;
+}
+.top-menu a {
+	display: block;
+	padding: 16px 24px;
+	color: #fff;
+	text-decoration: none;
+	transition: background 0.2s;
+}
+.top-menu a:hover {
+	background: #444;
+}
+
+#map-container {
+	position: absolute;
+	top: 56px; /* Height of the menu */
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: calc(100% - 56px);
+	background: #eaeaea;
+	overflow: hidden;
+}
+
+#map {
+	width: 100%;
+	height: 100%;
+	min-height: 300px;
+}
