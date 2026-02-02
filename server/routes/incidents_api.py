@@ -11,7 +11,11 @@ import sqlite3
 import os
 
 # Chemin du fichier de base de données SQLite des incidents
-DB_PATH = os.path.join(os.path.dirname(__file__), '../data/incidents.db')
+# Assure que le répertoire data/ existe
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../data')
+os.makedirs(DATA_DIR, exist_ok=True)
+
+DB_PATH = os.path.join(DATA_DIR, 'incidents.db')
 
 # Création d'un blueprint pour l'API incidents
 incidents_api = Blueprint('incidents_api', __name__)

@@ -39,18 +39,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest pytest-cov
 
-    # 4b. Crée les répertoires nécessaires
-    - name: Create data directory
-      run: |
-        mkdir -p server/data
-        ls -la server/
-
-    # 5. Lance les tests unitaires
+    # 5. Lance les tests unitaires avec pytest
     - name: Run unit tests
       run: |
-        python -m pytest test_incidents.py -v --tb=long 2>&1
+        python -m pytest test_incidents.py -v --tb=long
 
     # 6. Génère un rapport de couverture de code (optionnel)
     - name: Generate coverage report
