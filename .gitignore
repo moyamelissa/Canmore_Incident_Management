@@ -1,3 +1,11 @@
+# .gitignore
+# Ce fichier indique à Git quels fichiers et dossiers ignorer lors du commit.
+# 
+# Éviter de tracker les fichiers inutiles, sensibles ou auto-générés pour un dépôt propre avec uniquement le code essentiel
+# - Fichiers sensibles: mots de passe, clés API (.env)
+# - Fichiers auto-générés: cache, environnements virtuels (très volumineux)
+# - Fichiers temporaires: fichiers d'IDE, fichiers système
+
 # Python
 __pycache__/
 *.pyc
@@ -7,29 +15,29 @@ dist/
 build/
 .pytest_cache/
 
-# Virtual environments
+# Environnements virtuels
 .venv/
 venv/
 ENV/
 
-# IDEs
+# IDE et éditeurs
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS
+# Système d'exploitation
 .DS_Store
 Thumbs.db
 
-# Environment and config
+# Environnement et configuration
 .env
 .env.local
 
-# Databases
+# Bases de données
 *.db
 *.sqlite3
 *.sqlite
 
-# IDE and editor
+# Fichiers temporaires
 *.pkl
