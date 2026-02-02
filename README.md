@@ -1,5 +1,7 @@
 # Canmore Incident Management
 
+⚠️ **ATTENTION:** This is a **university project** and is intended for **development and educational purposes only**. This is **NOT** an official incident management system for the Town of Canmore and should **NOT** be used for real-world incident reporting.
+
 🇫🇷 [Lire la documentation en français](#documentation-en-français)
 
 ## 📋 Overview
@@ -173,6 +175,8 @@ This project is licensed under the MIT License. See the LICENSE file for more in
 # Documentation en Français
 
 🇺🇸 [Read English documentation](#overview)
+
+⚠️ **ATTENTION:** Ceci est un **projet universitaire** conçu à des fins **éducatives et de développement uniquement**. Ceci n'est **PAS** un système officiel de gestion des incidents pour la Ville de Canmore et ne doit **PAS** être utilisé pour des signalements d'incidents réels.
 
 ## 📋 Aperçu
 
