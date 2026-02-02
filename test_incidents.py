@@ -13,6 +13,10 @@ import tempfile
 # Ajoute le répertoire parent au chemin
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Crée les répertoires nécessaires s'ils n'existent pas
+data_dir = os.path.join(os.path.dirname(__file__), 'server', 'data')
+os.makedirs(data_dir, exist_ok=True)
+
 try:
     from main import app
 except ImportError as e:
