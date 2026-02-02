@@ -1,7 +1,35 @@
+# Python
 __pycache__/
 *.pyc
-*.pkl
+*.pyo
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDEs
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Environment and config
 .env
+.env.local
+
+# Databases
+*.db
 *.sqlite3
+*.sqlite
+
+# IDE and editor
+*.pkl
