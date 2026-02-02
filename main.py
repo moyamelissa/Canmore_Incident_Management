@@ -17,10 +17,8 @@ from server.routes.user_settings_api import user_settings_api  # API paramètres
 # Initialisation de l'application principale Flask
 
 # Configuration de la clé secrète pour la gestion des sessions Flask
-# (À remplacer par une valeur plus sécurisée en production)
-import secrets
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(32)
+app.secret_key = 'dev-key-canmore'
 
 # Enregistrement des blueprints (routes) dans l'application Flask
 from server.routes.info_route import info_bp  # Page d'informations
