@@ -22,7 +22,7 @@ Canmore Incident Management is a web-based incident reporting and tracking appli
 - **Backend:** Python (Flask, Sanic)
 - **Frontend:** JavaScript (Leaflet.js, WebSocket)
 - **Markup:** HTML5, CSS3
-- **Database:** CSV-based data storage (Addresses, buildings, incident types)
+- **Database:** SQLite (incidents), CSV (reference data: addresses, buildings, parks, trails)
 
 ## 📦 Installation
 
@@ -196,7 +196,7 @@ Canmore Incident Management est une application web de signalement et de suivi d
 - **Backend:** Python (Flask, Sanic)
 - **Frontend:** JavaScript (Leaflet.js, WebSocket)
 - **Markup:** HTML5, CSS3
-- **Base de Données:** Stockage basé sur CSV (Adresses, bâtiments, types d'incidents)
+- **Base de Données:** SQLite (incidents), CSV (données de référence: adresses, bâtiments, parcs, sentiers)
 
 ## 📦 Installation
 
