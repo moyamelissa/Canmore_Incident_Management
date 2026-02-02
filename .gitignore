@@ -34,10 +34,5 @@ Thumbs.db
 .env
 .env.local
 
-# Bases de données
-*.db
-*.sqlite3
-*.sqlite
-
 # Fichiers temporaires
 *.pkl
