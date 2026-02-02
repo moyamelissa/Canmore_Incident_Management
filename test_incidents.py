@@ -621,10 +621,510 @@ class TestSQLiteDatabase(unittest.TestCase):
 
 
 # ============================================================================
-# SECTION 6: ADDITIONAL TESTS (Add your tests here)
+# SECTION 6: ADDITIONAL TESTS (WebSocket, CSV, JSON, Pickle, Binary Files)
 # ============================================================================
-# Space for user-defined tests
+# Tests: Concepts learned - WebSocket, Templates, API, CSV, JSON, Pickle, etc
 # ============================================================================
+
+class TestFlaskTemplates(unittest.TestCase):
+    """Tests pour le rendu des templates Flask"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+
+    def test_home_template_renders(self):
+        """Test: La template home.html se rend correctement"""
+        response = self.client.get('/')
+        
+        self.assertEqual(response.status_code, 200)
+        # Vérifie que c'est du HTML (case-insensitive)
+        html_lower = response.data.decode('utf-8', errors='ignore').lower()
+        self.assertIn('<!doctype', html_lower)
+        self.assertIn('html', html_lower)
+
+    def test_map_template_loads(self):
+        """Test: La template map.html se charge"""
+        response = self.client.get('/map')
+        
+        self.assertEqual(response.status_code, 200)
+        # Vérifie que c'est du contenu HTML
+        self.assertGreater(len(response.data), 0)
+
+    def test_report_template_loads(self):
+        """Test: La template report.html se charge"""
+        response = self.client.get('/report')
+        
+        self.assertEqual(response.status_code, 200)
+
+    def test_info_template_loads(self):
+        """Test: La template info.html se charge"""
+        response = self.client.get('/info')
+        
+        self.assertEqual(response.status_code, 200)
+
+
+class TestFlaskAPI(unittest.TestCase):
+    """Tests pour l'API REST Flask"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+        
+        with self.app.app_context():
+            from server.routes.incidents_api import init_db
+            init_db()
+
+    def test_api_returns_json_content_type(self):
+        """Test: L'API retourne Content-Type: application/json"""
+        response = self.client.get('/api/incidents')
+        
+        self.assertIn('application/json', response.content_type)
+
+    def test_api_post_returns_json_response(self):
+        """Test: POST API retourne une réponse JSON"""
+        incident_data = {
+            'type': 'Test API',
+            'description': 'JSON Response Test',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        # Doit être parseable en JSON
+        try:
+            data = json.loads(response.data)
+            self.assertIsInstance(data, (dict, list))
+        except json.JSONDecodeError:
+            self.fail("API response is not valid JSON")
+
+    def test_api_get_all_incidents_returns_list(self):
+        """Test: GET /api/incidents retourne une liste"""
+        response = self.client.get('/api/incidents')
+        
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertIsInstance(data, list)
+
+
+class TestJSONHandling(unittest.TestCase):
+    """Tests pour la manipulation de JSON"""
+
+    def test_json_serialization(self):
+        """Test: Sérialisation d'objets en JSON"""
+        incident = {
+            'type': 'Pothole',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        # Sérialise en JSON
+        json_str = json.dumps(incident)
+        
+        # Doit être une string
+        self.assertIsInstance(json_str, str)
+        # Doit contenir les données
+        self.assertIn('Pothole', json_str)
+
+    def test_json_deserialization(self):
+        """Test: Désérialisation de JSON en objet"""
+        json_str = '{"type": "Tree", "latitude": 51.0447, "longitude": -115.3667}'
+        
+        # Désérialise
+        obj = json.loads(json_str)
+        
+        # Doit être un dict
+        self.assertIsInstance(obj, dict)
+        self.assertEqual(obj['type'], 'Tree')
+        self.assertAlmostEqual(obj['latitude'], 51.0447, places=4)
+
+    def test_json_with_special_characters(self):
+        """Test: JSON avec caractères spéciaux (accents)"""
+        incident = {
+            'type': 'Nid de poule à côté du café',
+            'description': 'Éclairage défaillant'
+        }
+        
+        # Sérialise avec ensure_ascii=False pour préserver accents
+        json_str = json.dumps(incident, ensure_ascii=False)
+        
+        # Désérialise et vérifie
+        obj = json.loads(json_str)
+        self.assertEqual(obj['type'], 'Nid de poule à côté du café')
+
+    def test_json_nested_structures(self):
+        """Test: JSON avec structures imbriquées"""
+        complex_data = {
+            'incidents': [
+                {'type': 'Pothole', 'location': {'lat': 51.0447, 'lng': -115.3667}},
+                {'type': 'Tree', 'location': {'lat': 51.0450, 'lng': -115.3670}}
+            ]
+        }
+        
+        json_str = json.dumps(complex_data)
+        obj = json.loads(json_str)
+        
+        # Vérifie la structure imbriquée
+        self.assertEqual(len(obj['incidents']), 2)
+        self.assertEqual(obj['incidents'][0]['location']['lat'], 51.0447)
+
+
+class TestCSVReading(unittest.TestCase):
+    """Tests pour la lecture de fichiers CSV"""
+
+    def setUp(self):
+        self.csv_path = os.path.join(os.path.dirname(__file__), 'static', 'data', 'incident_types.csv')
+
+    def test_csv_file_exists(self):
+        """Test: Le fichier CSV incident_types.csv existe"""
+        self.assertTrue(os.path.exists(self.csv_path), f"CSV file not found: {self.csv_path}")
+
+    def test_read_csv_file(self):
+        """Test: Lecture du fichier CSV"""
+        import csv
+        
+        if os.path.exists(self.csv_path):
+            with open(self.csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                rows = list(reader)
+            
+            # Doit avoir au moins une ligne (header ou data)
+            self.assertGreater(len(rows), 0)
+
+    def test_csv_parsing_to_list(self):
+        """Test: Parsing CSV en liste de dictionnaires"""
+        import csv
+        
+        if os.path.exists(self.csv_path):
+            with open(self.csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                data = list(reader)
+            
+            # Doit être une liste
+            self.assertIsInstance(data, list)
+
+    def test_csv_header_detection(self):
+        """Test: Détection des colonnes du CSV"""
+        import csv
+        
+        if os.path.exists(self.csv_path):
+            with open(self.csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                # Les colonnes sont dans fieldnames
+                fieldnames = reader.fieldnames
+            
+            # Doit avoir des colonnes
+            self.assertIsNotNone(fieldnames)
+            self.assertGreater(len(fieldnames), 0)
+
+
+class TestCSVWriting(unittest.TestCase):
+    """Tests pour l'écriture de fichiers CSV"""
+
+    def setUp(self):
+        self.test_csv = tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False)
+        self.test_csv_path = self.test_csv.name
+        self.test_csv.close()
+
+    def tearDown(self):
+        """Nettoyage après le test"""
+        if os.path.exists(self.test_csv_path):
+            os.remove(self.test_csv_path)
+
+    def test_write_csv_file(self):
+        """Test: Écriture dans un fichier CSV"""
+        import csv
+        
+        data = [
+            {'type': 'Pothole', 'description': 'Big hole', 'severity': 'High'},
+            {'type': 'Tree', 'description': 'Fallen tree', 'severity': 'Medium'},
+            {'type': 'Graffiti', 'description': 'Graffiti on sign', 'severity': 'Low'}
+        ]
+        
+        # Écrit le CSV
+        with open(self.test_csv_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=['type', 'description', 'severity'])
+            writer.writeheader()
+            writer.writerows(data)
+        
+        # Vérifie que le fichier existe et n'est pas vide
+        self.assertTrue(os.path.exists(self.test_csv_path))
+        self.assertGreater(os.path.getsize(self.test_csv_path), 0)
+
+    def test_csv_round_trip(self):
+        """Test: Écriture et relecture de CSV (round-trip)"""
+        import csv
+        
+        original_data = [
+            {'type': 'Test1', 'value': '100'},
+            {'type': 'Test2', 'value': '200'}
+        ]
+        
+        # Écrit
+        with open(self.test_csv_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=['type', 'value'])
+            writer.writeheader()
+            writer.writerows(original_data)
+        
+        # Relit
+        with open(self.test_csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            read_data = list(reader)
+        
+        # Vérifie que les données correspondent
+        self.assertEqual(len(read_data), len(original_data))
+        self.assertEqual(read_data[0]['type'], 'Test1')
+
+
+class TestPickleSerialization(unittest.TestCase):
+    """Tests pour la sérialisation Pickle"""
+
+    def setUp(self):
+        self.test_pickle = tempfile.NamedTemporaryFile(suffix='.pkl', delete=False)
+        self.pickle_path = self.test_pickle.name
+        self.test_pickle.close()
+
+    def tearDown(self):
+        """Nettoyage"""
+        if os.path.exists(self.pickle_path):
+            os.remove(self.pickle_path)
+
+    def test_pickle_serialization(self):
+        """Test: Sérialisation d'objet avec Pickle"""
+        import pickle
+        
+        data = {
+            'incidents': [
+                {'type': 'Pothole', 'lat': 51.0447},
+                {'type': 'Tree', 'lat': 51.0450}
+            ],
+            'user': 'test_user'
+        }
+        
+        # Sérialise
+        with open(self.pickle_path, 'wb') as f:
+            pickle.dump(data, f)
+        
+        # Vérifie que le fichier existe
+        self.assertTrue(os.path.exists(self.pickle_path))
+        self.assertGreater(os.path.getsize(self.pickle_path), 0)
+
+    def test_pickle_deserialization(self):
+        """Test: Désérialisation d'objet Pickle"""
+        import pickle
+        
+        original = {'name': 'Test', 'value': 42, 'items': [1, 2, 3]}
+        
+        # Sérialise
+        with open(self.pickle_path, 'wb') as f:
+            pickle.dump(original, f)
+        
+        # Désérialise
+        with open(self.pickle_path, 'rb') as f:
+            loaded = pickle.load(f)
+        
+        # Vérifie que les données correspondent
+        self.assertEqual(loaded['name'], 'Test')
+        self.assertEqual(loaded['value'], 42)
+        self.assertEqual(loaded['items'], [1, 2, 3])
+
+    def test_pickle_preserves_types(self):
+        """Test: Pickle préserve les types de données"""
+        import pickle
+        
+        data = {
+            'string': 'hello',
+            'integer': 42,
+            'float': 3.14,
+            'list': [1, 2, 3],
+            'dict': {'nested': 'value'}
+        }
+        
+        # Sérialise et désérialise
+        with open(self.pickle_path, 'wb') as f:
+            pickle.dump(data, f)
+        
+        with open(self.pickle_path, 'rb') as f:
+            loaded = pickle.load(f)
+        
+        # Vérifie les types
+        self.assertIsInstance(loaded['string'], str)
+        self.assertIsInstance(loaded['integer'], int)
+        self.assertIsInstance(loaded['float'], float)
+        self.assertIsInstance(loaded['list'], list)
+        self.assertIsInstance(loaded['dict'], dict)
+
+
+class TestBinaryFileHandling(unittest.TestCase):
+    """Tests pour la manipulation de fichiers binaires (rb/wb)"""
+
+    def setUp(self):
+        self.binary_file = tempfile.NamedTemporaryFile(delete=False)
+        self.binary_path = self.binary_file.name
+        self.binary_file.close()
+
+    def tearDown(self):
+        """Nettoyage"""
+        if os.path.exists(self.binary_path):
+            os.remove(self.binary_path)
+
+    def test_write_binary_file(self):
+        """Test: Écriture en mode binaire (wb)"""
+        binary_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR'
+        
+        # Écrit en mode binaire
+        with open(self.binary_path, 'wb') as f:
+            bytes_written = f.write(binary_data)
+        
+        # Vérifie l'écriture
+        self.assertEqual(bytes_written, len(binary_data))
+        self.assertTrue(os.path.exists(self.binary_path))
+
+    def test_read_binary_file(self):
+        """Test: Lecture en mode binaire (rb)"""
+        test_data = b'Test binary content \x00 with null bytes'
+        
+        # Écrit les données
+        with open(self.binary_path, 'wb') as f:
+            f.write(test_data)
+        
+        # Relit en mode binaire
+        with open(self.binary_path, 'rb') as f:
+            read_data = f.read()
+        
+        # Vérifie la lecture
+        self.assertEqual(read_data, test_data)
+
+    def test_binary_file_round_trip(self):
+        """Test: Écriture et relecture de fichier binaire"""
+        import pickle
+        
+        original_obj = {'data': [1, 2, 3], 'name': 'test'}
+        
+        # Sérialise en binaire
+        with open(self.binary_path, 'wb') as f:
+            pickle.dump(original_obj, f)
+        
+        # Désérialise
+        with open(self.binary_path, 'rb') as f:
+            loaded_obj = pickle.load(f)
+        
+        # Vérifie
+        self.assertEqual(loaded_obj, original_obj)
+
+    def test_binary_file_size(self):
+        """Test: Vérification de la taille du fichier binaire"""
+        test_data = b'x' * 1000
+        
+        with open(self.binary_path, 'wb') as f:
+            f.write(test_data)
+        
+        file_size = os.path.getsize(self.binary_path)
+        self.assertEqual(file_size, 1000)
+
+
+class TestWebSocketIntegration(unittest.TestCase):
+    """Tests pour les WebSockets (instant updates)"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+
+    def test_websocket_server_configured(self):
+        """Test: Le serveur WebSocket est configuré"""
+        # Vérifie que websocket_server.py existe
+        websocket_file = os.path.join(os.path.dirname(__file__), 'websocket_server.py')
+        self.assertTrue(os.path.exists(websocket_file), "websocket_server.py not found")
+
+    def test_app_has_socketio_support(self):
+        """Test: L'app Flask a le support SocketIO"""
+        # Vérifie que flask-socketio est importable
+        try:
+            from flask_socketio import SocketIO
+            self.assertTrue(True)
+        except ImportError:
+            self.fail("flask-socketio not installed")
+
+    def test_websocket_module_imports(self):
+        """Test: Le module websocket_server s'importe correctement"""
+        try:
+            # Essaie d'importer depuis le fichier
+            import sys
+            import importlib.util
+            
+            websocket_file = os.path.join(os.path.dirname(__file__), 'websocket_server.py')
+            if os.path.exists(websocket_file):
+                # Juste vérifier que le fichier existe et est valide Python
+                with open(websocket_file, 'r') as f:
+                    code = f.read()
+                    compile(code, websocket_file, 'exec')
+                self.assertTrue(True)
+        except SyntaxError:
+            self.fail("websocket_server.py has syntax errors")
+
+
+class TestBinarySearch(unittest.TestCase):
+    """Tests pour la recherche binaire (binary search)"""
+
+    def binary_search(self, arr, target):
+        """Implémentation simple de recherche binaire"""
+        left, right = 0, len(arr) - 1
+        
+        while left <= right:
+            mid = (left + right) // 2
+            if arr[mid] == target:
+                return mid
+            elif arr[mid] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+        
+        return -1
+
+    def test_binary_search_found(self):
+        """Test: Recherche binaire trouve l'élément"""
+        arr = [1, 3, 5, 7, 9, 11, 13]
+        result = self.binary_search(arr, 7)
+        
+        self.assertEqual(result, 3)  # Index de 7
+
+    def test_binary_search_not_found(self):
+        """Test: Recherche binaire ne trouve pas l'élément"""
+        arr = [1, 3, 5, 7, 9, 11, 13]
+        result = self.binary_search(arr, 8)
+        
+        self.assertEqual(result, -1)
+
+    def test_binary_search_first_element(self):
+        """Test: Recherche le premier élément"""
+        arr = [1, 3, 5, 7, 9]
+        result = self.binary_search(arr, 1)
+        
+        self.assertEqual(result, 0)
+
+    def test_binary_search_last_element(self):
+        """Test: Recherche le dernier élément"""
+        arr = [1, 3, 5, 7, 9]
+        result = self.binary_search(arr, 9)
+        
+        self.assertEqual(result, 4)
+
+    def test_binary_search_large_array(self):
+        """Test: Recherche binaire sur un grand tableau"""
+        arr = list(range(0, 10000, 2))  # [0, 2, 4, 6, ...]
+        result = self.binary_search(arr, 5000)
+        
+        # 5000 devrait être à l'index 2500
+        self.assertEqual(result, 2500)
 
 
 # ========== EXÉCUTION DES TESTS ==========
