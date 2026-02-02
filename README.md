@@ -1,5 +1,7 @@
 # Canmore Incident Management
 
+[![Tests CI/CD](https://github.com/moyamelissa/Canmore_Incident_Management/actions/workflows/tests.yml/badge.svg)](https://github.com/moyamelissa/Canmore_Incident_Management/actions/workflows/tests.yml)
+
 ⚠️ **ATTENTION:** This is a **university project** and is intended for **development and educational purposes only**. This is **NOT** an official incident management system for the Town of Canmore and should **NOT** be used for real-world incident reporting.
 
 🇫🇷 [Lire la documentation en français](#documentation-en-français)
@@ -111,6 +113,76 @@ The application will be available at `http://localhost:5000`
 4. **User Settings:**
    - Toggle dark mode for comfortable nighttime use
    - Settings persist across sessions
+
+## 🧪 Testing & Error Handling
+
+### Running Tests
+
+Execute the test suite:
+```bash
+python -m pytest test_incidents.py -v
+```
+
+Or run with coverage:
+```bash
+python -m pytest test_incidents.py --cov=server --cov-report=term
+```
+
+### Error Handling Implementation
+
+The project implements comprehensive error handling through exceptions:
+
+#### 1. **Database Errors** (`incidents_api.py`)
+```python
+try:
+    conn = get_db_connection()
+    conn.execute('INSERT INTO incidents ...')
+except Exception as e:
+    logger.error(f"Database error: {e}")
+    return jsonify({'error': 'Database error'}), 500
+```
+
+#### 2. **File I/O Errors** (`incident_types.py`)
+```python
+try:
+    with codecs.open(csv_path, encoding='utf-8-sig') as csvfile:
+        reader = csv.DictReader(csvfile)
+except FileNotFoundError:
+    return jsonify({'error': 'CSV file not found'}), 404
+except Exception as e:
+    return jsonify({'error': f'Error reading CSV: {str(e)}'}), 500
+```
+
+#### 3. **HTTP Request Errors** (`websocket_server.py`)
+```python
+try:
+    await client.send(msg)
+except Exception as e:
+    logger.error(f"Broadcast send error: {e}")
+```
+
+#### 4. **Validation Errors** (`incidents_api.py`)
+```python
+required_fields = ['type', 'description', 'latitude', 'longitude', 'timestamp']
+if not all(field in data for field in required_fields):
+    return jsonify({'error': 'Missing required fields'}), 400
+```
+
+#### 5. **Frontend Error Handling** (`map_incidents.js`)
+```javascript
+.catch(err => {
+    alert('Error: ' + err.message);
+    logger.error(err);
+});
+```
+
+### Test Coverage
+
+- ✅ **API Endpoint Tests** - POST, GET, PATCH, DELETE operations
+- ✅ **Validation Tests** - Required fields, data types, constraints
+- ✅ **Error Handling Tests** - Exception management and recovery
+- ✅ **Integration Tests** - Database persistence and WebSocket updates
+- ✅ **Route Tests** - Static pages and template rendering
 
 ## 📁 Project Structure
 
@@ -285,6 +357,76 @@ L'application sera accessible sur `http://localhost:5000`
 4. **Paramètres Utilisateur:**
    - Activez le mode sombre pour une utilisation nocturne confortable
    - Les paramètres sont sauvegardés entre les sessions
+
+## 🧪 Tests et Gestion des Erreurs
+
+### Exécuter les Tests
+
+Lancez la suite de tests:
+```bash
+python -m pytest test_incidents.py -v
+```
+
+Ou avec couverture de code:
+```bash
+python -m pytest test_incidents.py --cov=server --cov-report=term
+```
+
+### Implémentation de la Gestion des Erreurs
+
+Le projet implémente une gestion complète des erreurs par exceptions:
+
+#### 1. **Erreurs de Base de Données** (`incidents_api.py`)
+```python
+try:
+    conn = get_db_connection()
+    conn.execute('INSERT INTO incidents ...')
+except Exception as e:
+    logger.error(f"Erreur BD: {e}")
+    return jsonify({'error': 'Erreur base de données'}), 500
+```
+
+#### 2. **Erreurs d'Entrées/Sorties** (`incident_types.py`)
+```python
+try:
+    with codecs.open(csv_path, encoding='utf-8-sig') as csvfile:
+        reader = csv.DictReader(csvfile)
+except FileNotFoundError:
+    return jsonify({'error': 'Fichier CSV non trouvé'}), 404
+except Exception as e:
+    return jsonify({'error': f'Erreur lecture CSV: {str(e)}'}), 500
+```
+
+#### 3. **Erreurs Requêtes HTTP** (`websocket_server.py`)
+```python
+try:
+    await client.send(msg)
+except Exception as e:
+    logger.error(f"Erreur broadcast: {e}")
+```
+
+#### 4. **Erreurs de Validation** (`incidents_api.py`)
+```python
+required_fields = ['type', 'description', 'latitude', 'longitude', 'timestamp']
+if not all(field in data for field in required_fields):
+    return jsonify({'error': 'Champs manquants'}), 400
+```
+
+#### 5. **Gestion des Erreurs Frontend** (`map_incidents.js`)
+```javascript
+.catch(err => {
+    alert('Erreur: ' + err.message);
+    logger.error(err);
+});
+```
+
+### Couverture des Tests
+
+- ✅ **Tests des API** - Opérations POST, GET, PATCH, DELETE
+- ✅ **Tests de Validation** - Champs requis, types de données, contraintes
+- ✅ **Tests de Gestion d'Erreurs** - Gestion des exceptions et récupération
+- ✅ **Tests d'Intégration** - Persistance en BD et mises à jour WebSocket
+- ✅ **Tests des Routes** - Pages statiques et rendu des templates
 
 ## 📁 Structure du Projet
 
