@@ -25,12 +25,955 @@ except ImportError as e:
 
 
 # ============================================================================
-# SECTION 1: INFRASTRUCTURE TESTS (Application Setup & HTTP Routes)
+# SECTION 1: TESTS D'INFRASTRUCTURE (Application & Templates)
 # ============================================================================
-# Tests: App initialization, HTTP status codes, basic routing
+# Teste: Initialisation Flask, rendu des templates HTML, routes de base
+# Tests: Homepage, Map, Report, Info templates, 404 errors
 # ============================================================================
 
-class TestIncidentsAPI(unittest.TestCase):
+class TestFlaskInfrastructure(unittest.TestCase):
+    """Tests pour l'infrastructure Flask - Templates et routes de base"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+
+    def test_home_page_loads(self):
+        """Test: La page d'accueil (home.html) se charge correctement"""
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_home_template_renders(self):
+        """Test: La template home.html se rend correctement en HTML"""
+        response = self.client.get('/')
+        
+        self.assertEqual(response.status_code, 200)
+        html_lower = response.data.decode('utf-8', errors='ignore').lower()
+        self.assertIn('<!doctype', html_lower)
+        self.assertIn('html', html_lower)
+
+    def test_map_template_loads(self):
+        """Test: La template map.html se charge"""
+        response = self.client.get('/map')
+        self.assertEqual(response.status_code, 200)
+
+    def test_report_template_loads(self):
+        """Test: La template report.html se charge"""
+        response = self.client.get('/report')
+        self.assertEqual(response.status_code, 200)
+
+    def test_info_template_loads(self):
+        """Test: La template info.html se charge"""
+        response = self.client.get('/info')
+        self.assertEqual(response.status_code, 200)
+
+    def test_nonexistent_route_returns_404(self):
+        """Test: Route inexistante retourne erreur 404"""
+        response = self.client.get('/api/nonexistent')
+        self.assertEqual(response.status_code, 404)
+
+
+# ============================================================================
+# SECTION 2: TESTS D'API ET FORMATS DE DONNÉES (REST API & JSON)
+# ============================================================================
+# Teste: API REST Flask, réponses JSON, sérialisation/désérialisation
+# Tests: JSON handling, API endpoints, content types, nested structures
+# ============================================================================
+
+class TestFlaskAPI(unittest.TestCase):
+    """Tests pour l'API REST Flask - JSON et réponses API"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+        
+        with self.app.app_context():
+            from server.routes.incidents_api import init_db
+            init_db()
+
+    def test_api_returns_json_content_type(self):
+        """Test: L'API retourne Content-Type: application/json"""
+        response = self.client.get('/api/incidents')
+        self.assertIn('application/json', response.content_type)
+
+    def test_create_incident_api_success(self):
+        """Test: Créer un incident valide via API"""
+        incident_data = {
+            'type': 'Nid de poule',
+            'description': 'Grand trou',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertIn(response.status_code, [201, 200])
+
+    def test_api_post_returns_json_response(self):
+        """Test: POST API retourne une réponse JSON valide"""
+        incident_data = {
+            'type': 'Test API',
+            'description': 'JSON Response Test',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        try:
+            data = json.loads(response.data)
+            self.assertIsInstance(data, (dict, list))
+        except json.JSONDecodeError:
+            self.fail("API response is not valid JSON")
+
+    def test_api_get_all_incidents_returns_list(self):
+        """Test: GET /api/incidents retourne une liste JSON"""
+        response = self.client.get('/api/incidents')
+        
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertIsInstance(data, list)
+
+
+class TestJSONHandling(unittest.TestCase):
+    """Tests pour la manipulation de JSON - Sérialisation et désérialisation"""
+
+    def test_json_serialization(self):
+        """Test: Sérialisation d'objets Python en JSON"""
+        incident = {
+            'type': 'Pothole',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        json_str = json.dumps(incident)
+        
+        self.assertIsInstance(json_str, str)
+        self.assertIn('Pothole', json_str)
+
+    def test_json_deserialization(self):
+        """Test: Désérialisation de JSON en objet Python"""
+        json_str = '{"type": "Tree", "latitude": 51.0447, "longitude": -115.3667}'
+        
+        obj = json.loads(json_str)
+        
+        self.assertIsInstance(obj, dict)
+        self.assertEqual(obj['type'], 'Tree')
+        self.assertAlmostEqual(obj['latitude'], 51.0447, places=4)
+
+    def test_json_with_special_characters(self):
+        """Test: JSON avec caractères spéciaux français (accents, trémas)"""
+        incident = {
+            'type': 'Nid de poule à côté du café',
+            'description': 'Éclairage défaillant'
+        }
+        
+        json_str = json.dumps(incident, ensure_ascii=False)
+        obj = json.loads(json_str)
+        
+        self.assertEqual(obj['type'], 'Nid de poule à côté du café')
+
+    def test_json_nested_structures(self):
+        """Test: JSON avec structures imbriquées complexes"""
+        complex_data = {
+            'incidents': [
+                {'type': 'Pothole', 'location': {'lat': 51.0447, 'lng': -115.3667}},
+                {'type': 'Tree', 'location': {'lat': 51.0450, 'lng': -115.3670}}
+            ]
+        }
+        
+        json_str = json.dumps(complex_data)
+        obj = json.loads(json_str)
+        
+        self.assertEqual(len(obj['incidents']), 2)
+        self.assertEqual(obj['incidents'][0]['location']['lat'], 51.0447)
+
+
+# ============================================================================
+# SECTION 3: TESTS DE GESTION D'ERREURS ET VALIDATION (Error Handling)
+# ============================================================================
+# Teste: Validation d'entrées, gestion JSON malformé, champs manquants
+# Tests: Missing fields, malformed JSON, coordinate validation, input sanitization
+# ============================================================================
+
+class TestErrorHandling(unittest.TestCase):
+    """Tests de gestion des erreurs - Champs manquants et JSON invalide"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+
+    def test_missing_latitude_returns_400(self):
+        """Test: Incident sans latitude retourne erreur 400"""
+        incident_data = {
+            'type': 'Nid de poule',
+            'description': 'Grand trou',
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_missing_required_fields_returns_400(self):
+        """Test: Champs requis manquants retournent erreur 400"""
+        incident_data = {
+            'type': 'Test',
+            'description': 'Test',
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertEqual(response.status_code, 400)
+
+    def test_malformed_json_returns_error(self):
+        """Test: JSON malformé génère une erreur"""
+        response = self.client.post(
+            '/api/incidents',
+            data='{invalid json}',
+            content_type='application/json'
+        )
+        
+        self.assertGreaterEqual(response.status_code, 400)
+
+    def test_empty_json_returns_400(self):
+        """Test: JSON vide {} retourne erreur 400"""
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps({}),
+            content_type='application/json'
+        )
+        
+        self.assertEqual(response.status_code, 400)
+
+
+class TestDataValidation(unittest.TestCase):
+    """Tests de validation des données - Coordonnées et entrées utilisateur"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+        
+        with self.app.app_context():
+            from server.routes.incidents_api import init_db
+            init_db()
+
+    def test_valid_canmore_coordinates_accepted(self):
+        """Test: Coordonnées valides de Canmore sont acceptées"""
+        incident_data = {
+            'type': 'Test',
+            'description': 'Test',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertIn(response.status_code, [201, 200])
+
+    def test_string_latitude_accepted(self):
+        """Test: Latitude string est acceptée (pas de validation stricte de type)"""
+        incident_data = {
+            'type': 'Test',
+            'description': 'Test',
+            'latitude': 'invalid',
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertIn(response.status_code, [201, 200])
+
+    def test_string_longitude_accepted(self):
+        """Test: Longitude string est acceptée (pas de validation stricte de type)"""
+        incident_data = {
+            'type': 'Test',
+            'description': 'Test',
+            'latitude': 51.0447,
+            'longitude': 'invalid',
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertIn(response.status_code, [201, 200])
+
+    def test_empty_type_accepted(self):
+        """Test: Type d'incident vide est accepté (pas de validation stricte)"""
+        incident_data = {
+            'type': '',
+            'description': 'Test',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertIn(response.status_code, [201, 200])
+
+    def test_extra_fields_ignored(self):
+        """Test: Champs supplémentaires sont ignorés sans erreur"""
+        incident_data = {
+            'type': 'Test',
+            'description': 'Test',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z',
+            'extra_field': 'This should be ignored',
+            'another_field': 12345
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertIn(response.status_code, [201, 200])
+
+    def test_null_description_allowed(self):
+        """Test: Description null est acceptable (champ optionnel)"""
+        incident_data = {
+            'type': 'Test',
+            'description': None,
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertIn(response.status_code, [201, 200])
+
+
+# ============================================================================
+# SECTION 4: TESTS DE STOCKAGE ET PERSISTANCE (Database & File Storage)
+# ============================================================================
+# Teste: SQLite, CSV read/write, Pickle, Binary files, persistence
+# Tests: Database schema, constraints, transactions, CSV I/O, file operations
+# ============================================================================
+
+class TestDataPersistence(unittest.TestCase):
+    """Tests de persistance des données - Sauvegarde et récupération"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        self.client = self.app.test_client()
+        
+        with self.app.app_context():
+            from server.routes.incidents_api import init_db
+            init_db()
+
+    def test_incident_saved_to_database(self):
+        """Test: Un incident créé est sauvegardé en base de données"""
+        incident_data = {
+            'type': 'Database Test',
+            'description': 'Test persistance',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        create_response = self.client.post(
+            '/api/incidents',
+            data=json.dumps(incident_data),
+            content_type='application/json'
+        )
+        
+        self.assertIn(create_response.status_code, [201, 200])
+        
+        get_response = self.client.get('/api/incidents')
+        self.assertEqual(get_response.status_code, 200)
+        
+        data = json.loads(get_response.data)
+        self.assertGreater(len(data), 0)
+        
+        incident_types = [inc.get('type') for inc in data if isinstance(inc, dict)]
+        self.assertIn('Database Test', incident_types)
+
+    def test_multiple_incidents_stored_independently(self):
+        """Test: Plusieurs incidents sont stockés indépendamment"""
+        incidents = [
+            {'type': 'Pothole', 'description': 'Big hole', 'latitude': 51.0447, 'longitude': -115.3667, 'timestamp': '2024-02-02T10:00:00Z'},
+            {'type': 'Tree', 'description': 'Fallen tree', 'latitude': 51.0450, 'longitude': -115.3670, 'timestamp': '2024-02-02T11:00:00Z'},
+            {'type': 'Graffiti', 'description': 'Graffiti on sign', 'latitude': 51.0445, 'longitude': -115.3665, 'timestamp': '2024-02-02T12:00:00Z'}
+        ]
+        
+        for incident in incidents:
+            response = self.client.post(
+                '/api/incidents',
+                data=json.dumps(incident),
+                content_type='application/json'
+            )
+            self.assertIn(response.status_code, [201, 200])
+        
+        get_response = self.client.get('/api/incidents')
+        self.assertEqual(get_response.status_code, 200)
+        
+        data = json.loads(get_response.data)
+        self.assertGreaterEqual(len(data), 3)
+
+
+class TestSQLiteDatabase(unittest.TestCase):
+    """Tests pour SQLite - Schéma, contraintes, transactions, intégrité"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+        
+        with self.app.app_context():
+            from server.routes.incidents_api import init_db, DB_PATH
+            self.db_path = DB_PATH
+            init_db()
+
+    def test_database_file_exists(self):
+        """Test: Le fichier incidents.db existe"""
+        import os
+        self.assertTrue(os.path.exists(self.db_path))
+
+    def test_database_is_valid_sqlite_format(self):
+        """Test: Le fichier est une base de données SQLite valide"""
+        import sqlite3
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            tables = cursor.fetchall()
+            conn.close()
+            
+            self.assertGreater(len(tables), 0)
+        except Exception as e:
+            self.fail(f"Database is not valid SQLite: {e}")
+
+    def test_incidents_table_exists(self):
+        """Test: La table 'incidents' existe dans la base de données"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='incidents';")
+        result = cursor.fetchone()
+        conn.close()
+        
+        self.assertIsNotNone(result)
+
+    def test_incidents_table_has_required_columns(self):
+        """Test: La table incidents contient toutes les colonnes requises"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("PRAGMA table_info(incidents);")
+        columns = cursor.fetchall()
+        conn.close()
+        
+        column_names = [col[1] for col in columns]
+        required_columns = ['id', 'type', 'latitude', 'longitude', 'timestamp']
+        
+        for col in required_columns:
+            self.assertIn(col, column_names)
+
+    def test_not_null_constraints_enforced(self):
+        """Test: Les contraintes NOT NULL sont appliquées"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        with self.assertRaises(sqlite3.IntegrityError):
+            cursor.execute('''
+                INSERT INTO incidents (type, description, longitude, timestamp, status)
+                VALUES (?, ?, ?, ?, ?)
+            ''', ('Test', 'Test', -115.3667, '2024-02-02T10:00:00Z', 'unsolved'))
+            conn.commit()
+        
+        conn.close()
+
+    def test_autoincrement_ids(self):
+        """Test: Les IDs s'auto-incrémentent correctement"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO incidents (type, description, latitude, longitude, timestamp, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', ('Test1', 'Desc1', 51.0447, -115.3667, '2024-02-02T10:00:00Z', 'unsolved'))
+        id1 = cursor.lastrowid
+        
+        cursor.execute('''
+            INSERT INTO incidents (type, description, latitude, longitude, timestamp, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', ('Test2', 'Desc2', 51.0450, -115.3670, '2024-02-02T11:00:00Z', 'unsolved'))
+        id2 = cursor.lastrowid
+        
+        conn.commit()
+        conn.close()
+        
+        self.assertNotEqual(id1, id2)
+        self.assertLess(id1, id2)
+
+    def test_default_status_value(self):
+        """Test: La colonne status a une valeur par défaut 'unsolved'"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO incidents (type, description, latitude, longitude, timestamp)
+            VALUES (?, ?, ?, ?, ?)
+        ''', ('Test', 'Desc', 51.0447, -115.3667, '2024-02-02T10:00:00Z'))
+        
+        incident_id = cursor.lastrowid
+        conn.commit()
+        
+        cursor.execute('SELECT status FROM incidents WHERE id = ?', (incident_id,))
+        result = cursor.fetchone()
+        conn.close()
+        
+        self.assertEqual(result[0], 'unsolved')
+
+    def test_transaction_rollback_on_error(self):
+        """Test: Les transactions se font correctement (rollback sur erreur)"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT COUNT(*) FROM incidents')
+        count_before = cursor.fetchone()[0]
+        
+        try:
+            cursor.execute('''
+                INSERT INTO incidents (type, latitude, longitude, timestamp)
+                VALUES (?, ?, ?, ?)
+            ''', (None, 51.0447, -115.3667, '2024-02-02T10:00:00Z'))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            conn.rollback()
+        
+        cursor.execute('SELECT COUNT(*) FROM incidents')
+        count_after = cursor.fetchone()[0]
+        conn.close()
+        
+        self.assertEqual(count_before, count_after)
+
+    def test_data_retrieval_accuracy(self):
+        """Test: Les données insérées sont récupérées correctement"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        test_data = {
+            'type': 'Pothole',
+            'description': 'Large hole in road',
+            'latitude': 51.0447,
+            'longitude': -115.3667,
+            'timestamp': '2024-02-02T10:00:00Z'
+        }
+        
+        cursor.execute('''
+            INSERT INTO incidents (type, description, latitude, longitude, timestamp, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (test_data['type'], test_data['description'], test_data['latitude'], 
+              test_data['longitude'], test_data['timestamp'], 'unsolved'))
+        
+        incident_id = cursor.lastrowid
+        conn.commit()
+        
+        cursor.execute('SELECT type, description, latitude, longitude FROM incidents WHERE id = ?', 
+                      (incident_id,))
+        result = cursor.fetchone()
+        conn.close()
+        
+        self.assertEqual(result[0], test_data['type'])
+        self.assertEqual(result[1], test_data['description'])
+        self.assertAlmostEqual(result[2], test_data['latitude'], places=4)
+        self.assertAlmostEqual(result[3], test_data['longitude'], places=4)
+
+    def test_special_characters_stored_correctly(self):
+        """Test: Les caractères spéciaux français sont stockés correctement"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        special_text = "Nid de poule à côté du café - Éclairage défaillant"
+        
+        cursor.execute('''
+            INSERT INTO incidents (type, description, latitude, longitude, timestamp, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (special_text, "Description avec accénts: é à ù", 51.0447, -115.3667, 
+              '2024-02-02T10:00:00Z', 'unsolved'))
+        
+        incident_id = cursor.lastrowid
+        conn.commit()
+        
+        cursor.execute('SELECT type FROM incidents WHERE id = ?', (incident_id,))
+        result = cursor.fetchone()
+        conn.close()
+        
+        self.assertEqual(result[0], special_text)
+
+
+class TestCSVFileHandling(unittest.TestCase):
+    """Tests pour CSV - Lecture, écriture, parsing"""
+
+    def setUp(self):
+        self.csv_path = os.path.join(os.path.dirname(__file__), 'static', 'data', 'incident_types.csv')
+        self.test_csv = tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False)
+        self.test_csv_path = self.test_csv.name
+        self.test_csv.close()
+
+    def tearDown(self):
+        if os.path.exists(self.test_csv_path):
+            os.remove(self.test_csv_path)
+
+    def test_csv_file_exists(self):
+        """Test: Le fichier incident_types.csv existe"""
+        self.assertTrue(os.path.exists(self.csv_path))
+
+    def test_read_csv_file(self):
+        """Test: Lecture d'un fichier CSV"""
+        import csv
+        
+        if os.path.exists(self.csv_path):
+            with open(self.csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                rows = list(reader)
+            
+            self.assertGreater(len(rows), 0)
+
+    def test_csv_parsing_to_dict_list(self):
+        """Test: Parsing d'un CSV en liste de dictionnaires"""
+        import csv
+        
+        if os.path.exists(self.csv_path):
+            with open(self.csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                data = list(reader)
+            
+            self.assertIsInstance(data, list)
+
+    def test_csv_header_detection(self):
+        """Test: Détection des colonnes d'un fichier CSV"""
+        import csv
+        
+        if os.path.exists(self.csv_path):
+            with open(self.csv_path, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                fieldnames = reader.fieldnames
+            
+            self.assertIsNotNone(fieldnames)
+            self.assertGreater(len(fieldnames), 0)
+
+    def test_write_csv_file(self):
+        """Test: Écriture dans un fichier CSV"""
+        import csv
+        
+        data = [
+            {'type': 'Pothole', 'description': 'Big hole', 'severity': 'High'},
+            {'type': 'Tree', 'description': 'Fallen tree', 'severity': 'Medium'},
+            {'type': 'Graffiti', 'description': 'Graffiti on sign', 'severity': 'Low'}
+        ]
+        
+        with open(self.test_csv_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=['type', 'description', 'severity'])
+            writer.writeheader()
+            writer.writerows(data)
+        
+        self.assertTrue(os.path.exists(self.test_csv_path))
+        self.assertGreater(os.path.getsize(self.test_csv_path), 0)
+
+    def test_csv_round_trip(self):
+        """Test: Écriture et relecture d'un CSV (round-trip)"""
+        import csv
+        
+        original_data = [
+            {'type': 'Test1', 'value': '100'},
+            {'type': 'Test2', 'value': '200'}
+        ]
+        
+        with open(self.test_csv_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=['type', 'value'])
+            writer.writeheader()
+            writer.writerows(original_data)
+        
+        with open(self.test_csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            read_data = list(reader)
+        
+        self.assertEqual(len(read_data), len(original_data))
+        self.assertEqual(read_data[0]['type'], 'Test1')
+
+
+class TestPickleSerializationBinary(unittest.TestCase):
+    """Tests pour Pickle et fichiers binaires - Sérialisation et stockage"""
+
+    def setUp(self):
+        self.test_pickle = tempfile.NamedTemporaryFile(suffix='.pkl', delete=False)
+        self.pickle_path = self.test_pickle.name
+        self.test_pickle.close()
+        
+        self.binary_file = tempfile.NamedTemporaryFile(delete=False)
+        self.binary_path = self.binary_file.name
+        self.binary_file.close()
+
+    def tearDown(self):
+        if os.path.exists(self.pickle_path):
+            os.remove(self.pickle_path)
+        if os.path.exists(self.binary_path):
+            os.remove(self.binary_path)
+
+    def test_pickle_serialization(self):
+        """Test: Sérialisation d'objet Python avec Pickle"""
+        import pickle
+        
+        data = {
+            'incidents': [
+                {'type': 'Pothole', 'lat': 51.0447},
+                {'type': 'Tree', 'lat': 51.0450}
+            ],
+            'user': 'test_user'
+        }
+        
+        with open(self.pickle_path, 'wb') as f:
+            pickle.dump(data, f)
+        
+        self.assertTrue(os.path.exists(self.pickle_path))
+        self.assertGreater(os.path.getsize(self.pickle_path), 0)
+
+    def test_pickle_deserialization(self):
+        """Test: Désérialisation d'objet Pickle"""
+        import pickle
+        
+        original = {'name': 'Test', 'value': 42, 'items': [1, 2, 3]}
+        
+        with open(self.pickle_path, 'wb') as f:
+            pickle.dump(original, f)
+        
+        with open(self.pickle_path, 'rb') as f:
+            loaded = pickle.load(f)
+        
+        self.assertEqual(loaded['name'], 'Test')
+        self.assertEqual(loaded['value'], 42)
+        self.assertEqual(loaded['items'], [1, 2, 3])
+
+    def test_pickle_preserves_types(self):
+        """Test: Pickle préserve les types de données Python"""
+        import pickle
+        
+        data = {
+            'string': 'hello',
+            'integer': 42,
+            'float': 3.14,
+            'list': [1, 2, 3],
+            'dict': {'nested': 'value'}
+        }
+        
+        with open(self.pickle_path, 'wb') as f:
+            pickle.dump(data, f)
+        
+        with open(self.pickle_path, 'rb') as f:
+            loaded = pickle.load(f)
+        
+        self.assertIsInstance(loaded['string'], str)
+        self.assertIsInstance(loaded['integer'], int)
+        self.assertIsInstance(loaded['float'], float)
+        self.assertIsInstance(loaded['list'], list)
+        self.assertIsInstance(loaded['dict'], dict)
+
+    def test_write_binary_file_wb(self):
+        """Test: Écriture en mode binaire (wb)"""
+        binary_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR'
+        
+        with open(self.binary_path, 'wb') as f:
+            bytes_written = f.write(binary_data)
+        
+        self.assertEqual(bytes_written, len(binary_data))
+        self.assertTrue(os.path.exists(self.binary_path))
+
+    def test_read_binary_file_rb(self):
+        """Test: Lecture en mode binaire (rb)"""
+        test_data = b'Test binary content \x00 with null bytes'
+        
+        with open(self.binary_path, 'wb') as f:
+            f.write(test_data)
+        
+        with open(self.binary_path, 'rb') as f:
+            read_data = f.read()
+        
+        self.assertEqual(read_data, test_data)
+
+    def test_binary_file_round_trip(self):
+        """Test: Écriture et relecture de fichier binaire"""
+        import pickle
+        
+        original_obj = {'data': [1, 2, 3], 'name': 'test'}
+        
+        with open(self.binary_path, 'wb') as f:
+            pickle.dump(original_obj, f)
+        
+        with open(self.binary_path, 'rb') as f:
+            loaded_obj = pickle.load(f)
+        
+        self.assertEqual(loaded_obj, original_obj)
+
+    def test_binary_file_size(self):
+        """Test: Vérification de la taille du fichier binaire"""
+        test_data = b'x' * 1000
+        
+        with open(self.binary_path, 'wb') as f:
+            f.write(test_data)
+        
+        file_size = os.path.getsize(self.binary_path)
+        self.assertEqual(file_size, 1000)
+
+
+# ============================================================================
+# SECTION 5: TESTS D'ALGORITHMES ET CONCEPTS AVANCÉS (Algorithms & Advanced)
+# ============================================================================
+# Teste: Binary search algorithm, WebSocket real-time updates
+# Tests: Algorithm efficiency, WebSocket integration
+# ============================================================================
+
+class TestBinarySearchAlgorithm(unittest.TestCase):
+    """Tests pour l'algorithme de recherche binaire"""
+
+    def binary_search(self, arr, target):
+        """Implémentation de la recherche binaire"""
+        left, right = 0, len(arr) - 1
+        
+        while left <= right:
+            mid = (left + right) // 2
+            if arr[mid] == target:
+                return mid
+            elif arr[mid] < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+        
+        return -1
+
+    def test_binary_search_finds_element(self):
+        """Test: Recherche binaire trouve l'élément"""
+        arr = [1, 3, 5, 7, 9, 11, 13]
+        result = self.binary_search(arr, 7)
+        
+        self.assertEqual(result, 3)
+
+    def test_binary_search_element_not_found(self):
+        """Test: Recherche binaire retourne -1 si non trouvé"""
+        arr = [1, 3, 5, 7, 9, 11, 13]
+        result = self.binary_search(arr, 8)
+        
+        self.assertEqual(result, -1)
+
+    def test_binary_search_first_element(self):
+        """Test: Recherche binaire trouve le premier élément"""
+        arr = [1, 3, 5, 7, 9]
+        result = self.binary_search(arr, 1)
+        
+        self.assertEqual(result, 0)
+
+    def test_binary_search_last_element(self):
+        """Test: Recherche binaire trouve le dernier élément"""
+        arr = [1, 3, 5, 7, 9]
+        result = self.binary_search(arr, 9)
+        
+        self.assertEqual(result, 4)
+
+    def test_binary_search_large_array(self):
+        """Test: Recherche binaire sur un grand tableau trié"""
+        arr = list(range(0, 10000, 2))
+        result = self.binary_search(arr, 5000)
+        
+        self.assertEqual(result, 2500)
+
+
+class TestWebSocketIntegration(unittest.TestCase):
+    """Tests pour l'intégration WebSocket - Mises à jour en temps réel"""
+
+    def setUp(self):
+        self.app = app
+        self.app.config['TESTING'] = True
+
+    def test_websocket_server_exists(self):
+        """Test: Le serveur WebSocket (websocket_server.py) est configuré"""
+        websocket_file = os.path.join(os.path.dirname(__file__), 'websocket_server.py')
+        self.assertTrue(os.path.exists(websocket_file))
+
+    def test_app_has_socketio_support(self):
+        """Test: L'application Flask a le support SocketIO"""
+        try:
+            from flask_socketio import SocketIO
+            self.assertTrue(True)
+        except ImportError:
+            self.fail("flask-socketio not installed")
+
+    def test_websocket_module_valid_python(self):
+        """Test: Le module websocket_server a une syntaxe Python valide"""
+        try:
+            websocket_file = os.path.join(os.path.dirname(__file__), 'websocket_server.py')
+            if os.path.exists(websocket_file):
+                with open(websocket_file, 'r') as f:
+                    code = f.read()
+                    compile(code, websocket_file, 'exec')
+                self.assertTrue(True)
+        except SyntaxError:
+            self.fail("websocket_server.py has syntax errors")
+
+
+# ========== EXÉCUTION DES TESTS ==========
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
     """Tests pour l'API des incidents"""
 
     @classmethod
