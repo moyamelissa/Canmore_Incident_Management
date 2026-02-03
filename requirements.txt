@@ -3,7 +3,7 @@
 # Dépendances Python nécessaires pour l'application Canmore Incident Management
 
 Flask==2.3.0
-Werkzeug<3.0
+Werkzeug==2.3.8
 flask-socketio==5.3.0
 requests==2.31.0
 Sanic==23.12.0
