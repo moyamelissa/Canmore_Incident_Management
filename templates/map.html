@@ -16,16 +16,17 @@
     <script src="/static/js/map_incidents.js"></script>
     <script src="/static/js/theme_toggle.js"></script>
     <script>
-      // Préférence dark mode utilisateur
+      // Fetch latest settings from backend in background
       fetch('/get_user_settings')
         .then(res => res.json())
         .then(settings => {
           if (settings.darkModeGlobal !== undefined) {
             localStorage.setItem('darkModeGlobal', settings.darkModeGlobal ? 'true' : 'false');
           }
-        });
-    </script>
-    <script>
+        })
+        .catch(() => {}); // Silently fail if fetch errors
+      
+      // Always initialize the theme toggle
       initThemeToggle({
         darkCss: '/static/css/style_map_dark.css',
         storageKey: 'darkModeGlobal',
@@ -143,8 +144,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             var musicIcon = document.getElementById('music-icon');
             var music = document.getElementById('background-music');
-            // État initial depuis le localStorage
-            var musicPref = localStorage.getItem('musicOn');
             function updateMusicIcon() {
                 if (music.paused) {
                     musicIcon.src = '/static/icons/audio_off.png';
@@ -152,20 +151,15 @@
                     musicIcon.src = '/static/icons/audio_on.png';
                 }
             }
-            if (musicPref === null || musicPref === 'true') {
-                music.volume = 0.5;
-                music.play();
-            } else {
-                music.pause();
-            }
+            // Music starts paused by default
+            music.pause();
             updateMusicIcon();
             musicIcon.addEventListener('click', function() {
                 if (music.paused) {
+                    music.volume = 0.5;
                     music.play();
-                    localStorage.setItem('musicOn', 'true');
                 } else {
                     music.pause();
-                    localStorage.setItem('musicOn', 'false');
                 }
                 updateMusicIcon();
                 // Sauvegarde de la préférence côté backend

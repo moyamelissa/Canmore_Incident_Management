@@ -15,6 +15,17 @@
     <!-- Script de gestion du mode sombre -->
     <script src="/static/js/theme_toggle.js"></script>
     <script>
+      // Fetch latest settings from backend in background
+      fetch('/get_user_settings')
+        .then(res => res.json())
+        .then(settings => {
+          if (settings.darkModeGlobal !== undefined) {
+            localStorage.setItem('darkModeGlobal', settings.darkModeGlobal ? 'true' : 'false');
+          }
+        })
+        .catch(() => {}); // Silently fail if fetch errors
+      
+      // Always initialize the theme toggle
       initThemeToggle({
         darkCss: '/static/css/style_info_dark.css',
         storageKey: 'darkModeGlobal',
