@@ -146,7 +146,7 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
                     body: JSON.stringify({ [storageKey]: false })
                 });
             }
-        }}
+        }
 
         // Initialisation de l'état du mode sombre
         if (localStorage.getItem(storageKey) === 'true') {
