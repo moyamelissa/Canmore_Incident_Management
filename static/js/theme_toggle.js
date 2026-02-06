@@ -56,8 +56,9 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
             settingsModal.style.alignItems = 'center';
             settingsModal.style.justifyContent = 'center';
             let modalContent = document.createElement('div');
-            modalContent.style.background = '#23272a';
-            modalContent.style.color = '#e0e0e0';
+            modalContent.id = 'settings-modal-content';
+            modalContent.style.background = '#ffffff';
+            modalContent.style.color = '#333333';
             modalContent.style.borderRadius = '10px';
             modalContent.style.padding = '32px 28px 24px 28px';
             modalContent.style.minWidth = '320px';
@@ -71,7 +72,7 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
             closeBtn.style.right = '14px';
             closeBtn.style.background = 'none';
             closeBtn.style.border = 'none';
-            closeBtn.style.color = '#e0e0e0';
+            closeBtn.style.color = '#333333';
             closeBtn.style.fontSize = '1.5em';
             closeBtn.style.cursor = 'pointer';
             modalContent.appendChild(closeBtn);
@@ -101,6 +102,8 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
 
         // Gestion du mode sombre (activation/désactivation)
         function setDarkMode(on) {
+            let modalContent = document.getElementById('settings-modal-content');
+            let closeBtn = document.getElementById('close-settings');
             if (on) {
                 if (!darkLink) {
                     darkLink = document.createElement('link');
@@ -109,6 +112,12 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
                     document.head.appendChild(darkLink);
                 }
                 document.body.classList.add('dark-mode');
+                // Update modal colors for dark mode
+                if (modalContent) {
+                    modalContent.style.background = '#23272a';
+                    modalContent.style.color = '#e0e0e0';
+                }
+                if (closeBtn) closeBtn.style.color = '#e0e0e0';
                 localStorage.setItem(storageKey, 'true');
                 fetch('/save_user_settings', {
                     method: 'POST',
@@ -124,6 +133,12 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
                     links.forEach(l => l.remove());
                 }
                 document.body.classList.remove('dark-mode');
+                // Update modal colors for light mode
+                if (modalContent) {
+                    modalContent.style.background = '#ffffff';
+                    modalContent.style.color = '#333333';
+                }
+                if (closeBtn) closeBtn.style.color = '#333333';
                 localStorage.setItem(storageKey, 'false');
                 fetch('/save_user_settings', {
                     method: 'POST',
@@ -131,7 +146,7 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
                     body: JSON.stringify({ [storageKey]: false })
                 });
             }
-        }
+        }}
 
         // Initialisation de l'état du mode sombre
         if (localStorage.getItem(storageKey) === 'true') {
