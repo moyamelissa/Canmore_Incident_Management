@@ -1,6 +1,6 @@
 '''
 user_settings.py
-Ce module gère la sauvegarde et le chargement des préférences utilisateur (mode sombre, musique, etc.)
+Ce module gère la sauvegarde et le chargement des préférences utilisateur
 à l'aide de la sérialisation Pickle dans un fichier binaire.
 '''
 
