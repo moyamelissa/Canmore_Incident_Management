@@ -22,13 +22,6 @@ Styles communs pour l'en-tête de navigation de toutes les pages.
 	gap: 18px;
 }
 
-.menu-icons-left {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	margin-left: 18px;
-}
-
 .menu-title-modern {
 	font-size: 1.4em;
 	font-weight: 600;

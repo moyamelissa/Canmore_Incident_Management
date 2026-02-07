@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="/static/css/style_map_dark.css" id="dark-css" disabled>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <script src="/static/js/map_incidents_admin.js"></script>
+    <script src="/static/js/map_incidents_display.js"></script>
+    <script src="/static/js/map_incidents_form.js"></script>
     <script src="/static/js/map_incidents.js"></script>
     <script src="/static/js/theme_toggle.js"></script>
 </head>
@@ -193,8 +196,8 @@
             // Explication: Prépare la logique de signalement et d'affichage des incidents
             // =========================
             // Initialisation de la logique de gestion des incidents (voir map_incidents.js)
-            loadCanmoreBoundary('/static/data/city_boundary.geojson', function () {
-                setupIncidentReporting(window.map);
+            window.loadCanmoreBoundary('/static/data/city_boundary.geojson', function () {
+                window.setupIncidentReporting(window.map);
             });
         };
     </script>

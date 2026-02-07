@@ -33,7 +33,7 @@ ws.onopen = function() {
 ws.onmessage = function(event) {
     console.log('Received:', event.data);
     if (typeof window.displayAllIncidents === 'function' && window.map) {
-        displayAllIncidents(window.map);
+        window.displayAllIncidents(window.map);
     }
     if (typeof updateTable === 'function' && typeof updateSummary === 'function') {
         fetch('/api/incidents')

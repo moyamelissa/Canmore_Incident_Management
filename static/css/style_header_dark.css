@@ -60,9 +60,3 @@ Mode sombre pour l'en-tête de navigation de toutes les pages.
 .dropdown-content label {
 	color: #fff !important;
 }
-
-/* Lien admin en mode sombre */
-.admin-link {
-	color: inherit;
-	background: none !important;
-}

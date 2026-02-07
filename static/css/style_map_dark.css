@@ -21,8 +21,7 @@ body.dark-mode {
 .dark-mode .leaflet-popup-content label,
 .dark-mode .leaflet-popup-content select,
 .dark-mode .leaflet-popup-content textarea,
-.dark-mode .leaflet-popup-content input,
-.dark-mode .leaflet-popup-content button {
+.dark-mode .leaflet-popup-content input {
     color: #fff !important;
     background: #23272a !important;
     border-color: #444 !important;
