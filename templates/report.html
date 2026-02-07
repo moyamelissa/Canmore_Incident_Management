@@ -156,11 +156,16 @@
     // Explication: Permet d'exporter les incidents affichés au format CSV
     // =========================
     document.getElementById('export-btn').addEventListener('click', function() {
-        let csv = 'ID,Type,Description,Date,Statut\n';
+        // Ajoute un BOM UTF-8 pour que Excel lise correctement les accents
+        let csv = '\ufeffID,Type,Description,Date,Statut\n';
         allIncidents.forEach(inc => {
-            csv += `${inc.id},"${inc.type.replace(/"/g,'""')}","${inc.description.replace(/"/g,'""')}",${inc.timestamp},${inc.status}\n`;
+            const type = (inc.type || '').toString().replace(/"/g, '""');
+            const description = (inc.description || '').toString().replace(/"/g, '""');
+            const date = (inc.timestamp || '').toString();
+            const status = (inc.status || '').toString();
+            csv += `${inc.id},"${type}","${description}",${date},${status}\n`;
         });
-        const blob = new Blob([csv], {type: 'text/csv'});
+        const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

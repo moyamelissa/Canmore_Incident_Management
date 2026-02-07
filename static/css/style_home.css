@@ -2,21 +2,7 @@
  style_home.css
  Styles pour la page d'accueil de l'application Canmore Incident Management.
  */
-.footer-global {
-	position: fixed;
-	bottom: 4px;
-	right: 8px;
-	font-size: 0.95rem;
-	color: #888;
-	z-index: 100;
-	background: none;
-}
-.top-bar-global {
-	position: fixed;
-	top: 18px;
-	right: 32px;
-	z-index: 100;
-}
+/* Panneau droit : zone principale (texte, boutons, motif en filigrane) */
 .right-panel {
 	position: relative;
 	flex: 1;
@@ -30,32 +16,7 @@
 	overflow: hidden;
 }
 
-.background-icon {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 0;
-	pointer-events: none;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.bg-leaf {
-	width: 70%;
-	max-width: 500px;
-	opacity: 0.08;
-	filter: blur(0.5px);
-	object-fit: contain;
-	user-select: none;
-}
-
-.right-panel > *:not(.background-icon) {
-	position: relative;
-	z-index: 1;
-}
+/* Styles globaux : fond, police et boite de base */
 html, body {
 	height: 100%;
 	margin: 0;
@@ -71,6 +32,7 @@ html, body {
 	width: 100vw;
 }
 
+/* Panneau gauche : image de couverture plein ecran */
 .left-panel {
 	flex: 1;
 	display: flex;
@@ -126,22 +88,6 @@ html, body {
 	z-index: 1;
 }
 
-.top-bar {
-	position: absolute;
-	top: 30px;
-	right: 40px;
-	z-index: 2;
-}
-
-.lang-btn {
-	padding: 6px 18px;
-	border-radius: 6px;
-	border: 1px solid #333;
-	background: #f9f9f9;
-	cursor: pointer;
-	font-weight: bold;
-}
-
 .title {
 	margin-top: 60px;
 	font-family: 'Merriweather', serif;
@@ -152,6 +98,7 @@ html, body {
 	text-align: left;
 	margin-bottom: 0.5rem;
 }
+/* Titres : hierarchie visuelle + accent couleur */
 .title-main {
 	display: block;
 	font-family: 'Merriweather', serif;
@@ -185,6 +132,7 @@ html, body {
 	gap: 24px;
 }
 
+/* Boutons d'acces principal : navigation vers les pages */
 .main-btn {
 	padding: 16px 36px;
 	border: 2px solid #222;
@@ -219,21 +167,3 @@ html, body {
 	margin-left: 16px;
 }
 
-.footer {
-	position: absolute;
-	bottom: 30px;
-	right: 40px;
-	font-size: 0.95rem;
-	color: #888;
-	z-index: 2;
-}
-
-.footer-absolute {
-	position: absolute;
-	bottom: 8px;
-	right: 16px;
-	font-size: 0.95rem;
-	color: #888;
-	z-index: 10;
-	background: none;
-}

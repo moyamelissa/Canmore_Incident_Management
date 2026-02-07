@@ -3,6 +3,7 @@ style_map_dark.css
 Mode sombre pour la page de carte interactive de l'application Canmore Incident Management.
 */
 
+/* Popups Leaflet en mode sombre : lisibilite des formulaires */
 .dark-mode .leaflet-popup-content-wrapper,
 .dark-mode .leaflet-popup-tip {
     background: #23272a !important;
@@ -23,6 +24,7 @@ Mode sombre pour la page de carte interactive de l'application Canmore Incident 
 .dark-mode .leaflet-popup-content input::placeholder {
     color: #b0b0b0 !important;
 }
+/* Icônes et boutons (menu, musique, parametres) : contraste uniforme */
 .music-icon-modern,
 #settings-btn img,
 .music-icon-modern {
@@ -48,11 +50,13 @@ Mode sombre pour la page de carte interactive de l'application Canmore Incident 
     filter: brightness(0) invert(1) drop-shadow(0 1px 4px #0003) !important;
 }
 
+/* Base globale du mode sombre : fond et texte */
 .dark-mode,
 body.dark-mode {
     background: #23272a;
     color: #fff;
 }
+/* Barre de menu et controles : navigation sombre */
 .top-menu-modern {
     background: #23272a !important;
     color: #fff !important;
@@ -92,6 +96,7 @@ body.dark-mode {
     background: #23272a !important;
     color: #8ab4f8 !important;
 }
+/* Champs de formulaire : saisie lisible en sombre */
 input, select, textarea, button {
     background: #23272a !important;
     color: #fff !important;
@@ -106,14 +111,11 @@ a, a:visited {
 a:hover {
     color: #a3d3ff;
 }
+/* Carte : surface sombre coherente */
 .leaflet-container {
     background: #23272a !important;
 }
-table, th, td {
-    background: #23272a !important;
-    color: #fff !important;
-    border-color: #444 !important;
-}
+/* Barres de defilement : style adapte au mode sombre */
 ::-webkit-scrollbar {
     background: #23272a;
 }

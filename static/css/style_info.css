@@ -3,6 +3,20 @@ style_info.css
 Styles pour la page d'information de l'application Canmore Incident Management.
 */
 
+/* Base globale : fond clair, typographie et espace de recherche */
+body {
+	background: #f7f9fb;
+	font-family: 'Segoe UI', Arial, sans-serif;
+	margin: 0;
+}
+
+h1 {
+	color: #23272a;
+	font-size: 2.1em;
+	margin-bottom: 24px;
+}
+
+/* Grille verticale de cartes de fonctionnalites : liste des categories */
 .feature-cards-vertical {
 	display: flex;
 	flex-wrap: wrap;
@@ -18,21 +32,7 @@ Styles pour la page d'information de l'application Canmore Incident Management.
 	box-sizing: border-box;
 }
 
- 
-.info-container {
-	background: #fff;
-	border-radius: 16px;
-	box-shadow: 0 4px 24px #0001;
-	width: 96vw;
-	max-width: 1400px;
-	margin: 38px auto 0 auto;
-	padding: 38px 48px 32px 48px;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	min-height: 70vh;
-}
-
+/* Carte individuelle : icone, titre, description et effet clic */
 .feature-card {
 	display: flex;
 	align-items: flex-start;
@@ -75,6 +75,7 @@ Styles pour la page d'information de l'application Canmore Incident Management.
 	filter: none;
 }
 
+/* Couleurs par categorie + etats au survol pour guider l'utilisateur */
 .feature-card[data-type="parcs"] .feature-title { color: #2ec27e; }
 .feature-card[data-type="buildings"] .feature-title { color: #1976d2; }
 .feature-card[data-type="trails"] .feature-title { color: #e67e22; }
@@ -105,55 +106,6 @@ Styles pour la page d'information de l'application Canmore Incident Management.
 	background: #f3e8fd;
 	border: 2px solid #9c27b0;
 	box-shadow: 0 2px 12px #9c27b022;
-}
-
-
-@media (max-width: 1100px) {
-	.feature-cards-vertical {
-		flex-wrap: wrap;
-		gap: 18px 12px;
-		padding-left: 12px;
-		padding-right: 12px;
-	}
-	.feature-card {
-		min-width: 180px;
-		max-width: 320px;
-		font-size: 1em;
-	}
-}
-@media (max-width: 700px) {
-	.feature-cards-vertical {
-		flex-direction: column;
-		gap: 0;
-		align-items: stretch;
-		padding-left: 0;
-		padding-right: 0;
-	}
-	.feature-card {
-		width: 100%;
-		min-width: 0;
-		max-width: 100%;
-		margin-bottom: 14px;
-	}
-}
-/* Modern search UI inspired by example */
-body {
-	background: #f7f9fb;
-	font-family: 'Segoe UI', Arial, sans-serif;
-	margin: 0;
-}
-.container {
-	max-width: 800px;
-	margin: 40px auto;
-	background: #fff;
-	border-radius: 18px;
-	box-shadow: 0 4px 24px #0001;
-	padding: 36px 36px 32px 36px;
-}
-h1 {
-	color: #23272a;
-	font-size: 2.1em;
-	margin-bottom: 24px;
 }
 
 .search-bar#search-bar-container {
@@ -209,6 +161,7 @@ h1 {
 #search-btn:hover {
 	background: #125ea2;
 }
+/* Suggestions de recherche : liste d'autocompletion */
 #suggestions ul {
 	background: #fff;
 	border-radius: 10px;
@@ -232,6 +185,8 @@ h1 {
 #suggestions li:hover {
 	background: #e3f2fd;
 }
+
+/* Cartes de resultat et message d'erreur : retour utilisateur */
 .info-card {
 	background: #f5f7fa;
 	border-radius: 12px;
@@ -250,8 +205,38 @@ h1 {
 	padding: 12px 18px;
 	box-shadow: 0 1px 4px #0001;
 }
+
+/* Ajustements responsives : adapte la grille aux ecrans moyens */
+@media (max-width: 1100px) {
+	.feature-cards-vertical {
+		flex-wrap: wrap;
+		gap: 18px 12px;
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+	.feature-card {
+		min-width: 180px;
+		max-width: 320px;
+		font-size: 1em;
+	}
+}
+@media (max-width: 700px) {
+	.feature-cards-vertical {
+		flex-direction: column;
+		gap: 0;
+		align-items: stretch;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.feature-card {
+		width: 100%;
+		min-width: 0;
+		max-width: 100%;
+		margin-bottom: 14px;
+	}
+}
+/* Ajustements mobiles : compresse les marges et paddings */
 @media (max-width: 600px) {
-	.container { padding: 12px; }
 	.feature-card { padding: 8px 12px; font-size: 1em; }
 	.info-card { padding: 12px 8px; }
 }

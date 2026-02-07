@@ -3,8 +3,11 @@ style_report.css
 Styles pour la page de rapport de l'application Canmore Incident Management.
 */
 
+/* Base globale : fond, couleurs et typographie */
 body { background: #f7f9fb; color: #222; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; }
+/* En-tete du tableau de bord : zone titre et actions */
 .dashboard-header { padding: 12px 32px 0 32px; }
+/* Cartes de resume : indicateurs clés en haut */
 .summary-cards { display: flex; gap: 24px; margin-bottom: 24px; }
 .summary-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 24px 32px; flex: 1; display: flex; flex-direction: column; align-items: flex-start; }
 .summary-card .label { color: #888; font-size: 1em; margin-bottom: 6px; }
@@ -13,6 +16,7 @@ body { background: #f7f9fb; color: #222; font-family: 'Segoe UI', Arial, sans-se
 .summary-card .sub.red { color: #e53935; }
 .summary-card .sub.yellow { color: #fbc02d; }
 .summary-card .sub.gray { color: #888; }
+/* Boutons d'action : export et commandes rapides */
 .export-btn { background: #1abc9c; color: #fff; border: none; border-radius: 6px; padding: 10px 22px; font-size: 1em; font-weight: 500; cursor: pointer; float: right; margin-top: 8px; margin-bottom: 16px; transition: background 0.2s; }
 .export-btn:hover { background: #159c85; }
 .back-btn {
@@ -33,9 +37,11 @@ body { background: #f7f9fb; color: #222; font-family: 'Segoe UI', Arial, sans-se
 	background: #1976d2;
 	color: #fff;
 }
+/* Contenu principal et recherche : filtre des incidents */
 .main-content { padding: 0 32px 32px 32px; }
 .search-bar { margin: 18px 0 12px 0; display: flex; align-items: center; gap: 12px; }
 .search-bar input { padding: 8px 14px; border-radius: 6px; border: 1px solid #ccc; font-size: 1em; width: 320px; }
+/* Table des incidents : liste detaillee */
 .table-container { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 0 0 8px 0; }
 table { width: 100%; border-collapse: collapse; margin-top: 0; }
 th, td { padding: 12px 10px; text-align: left; }
@@ -46,6 +52,3 @@ td.status { font-weight: 600; }
 td.status.paid { color: #4caf50; }
 td.status.pending { color: #fbc02d; }
 td.status.outstanding { color: #e53935; }
-.actions { display: flex; gap: 10px; }
-.actions button { background: none; border: none; cursor: pointer; font-size: 1.1em; color: #1976d2; }
-.chart-section { margin-top: 32px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 24px; }

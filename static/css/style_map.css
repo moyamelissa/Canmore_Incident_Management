@@ -3,7 +3,7 @@ style_map.css
 Styles pour la page de carte interactive de l'application Canmore Incident Management.
 */
 
-
+/* Icône retour et bouton musique : navigation et controle audio */
 .back-icon-modern {
 	display: flex;
 	align-items: center;
@@ -46,6 +46,7 @@ Styles pour la page de carte interactive de l'application Canmore Incident Manag
 	filter: drop-shadow(0 1px 4px #0001);
 }
 
+/* Barre de menu en haut : navigation, titre et filtres */
 .top-menu-modern {
 	display: flex;
 	align-items: center;
@@ -89,6 +90,7 @@ Styles pour la page de carte interactive de l'application Canmore Incident Manag
 	gap: 18px;
 	position: relative;
 }
+/* Lien d'administration : acces rapide aux fonctions admin */
 .admin-link {
 	color: #333 !important;
 	font-weight: 500;
@@ -103,6 +105,7 @@ Styles pour la page de carte interactive de l'application Canmore Incident Manag
 	color: #23272b !important;
 }
 
+/* Menu deroulant des filtres : filtrage des incidents */
 .dropdown {
 	position: relative;
 	display: inline-block;
@@ -156,6 +159,7 @@ Styles pour la page de carte interactive de l'application Canmore Incident Manag
 	margin-right: 8px;
 }
 
+/* Zone carte : conteneur Leaflet en pleine page */
 #map-container {
 	position: absolute;
 	top: 56px; 
@@ -173,6 +177,7 @@ Styles pour la page de carte interactive de l'application Canmore Incident Manag
 	min-height: 300px;
 }
 
+/* Base globale : pleine hauteur pour la carte */
 body, html {
 	height: 100%;
 	margin: 0;
@@ -180,6 +185,7 @@ body, html {
 	box-sizing: border-box;
 }
 
+/* Ajustement des listes dans les popups Leaflet : evite les debordements */
 .leaflet-popup-content select {
 	max-width: 220px;
 	width: 100%;
