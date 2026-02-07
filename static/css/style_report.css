@@ -16,25 +16,6 @@ body { background: #f7f9fb; color: #222; font-family: 'Segoe UI', Arial, sans-se
 .summary-card .sub.red { color: #e53935; }
 .summary-card .sub.yellow { color: #fbc02d; }
 .summary-card .sub.gray { color: #888; }
-/* Boutons d'action : export et commandes rapides */
-.back-btn {
-	display: inline-block;
-	background: #fff;
-	color: #1976d2;
-	border-radius: 6px;
-	padding: 4px 8px;
-	font-size: 1em;
-	font-weight: 500;
-	text-decoration: none;
-	box-shadow: 0 2px 8px #0001;
-	border: 1px solid #e0e0e0;
-	transition: background 0.2s, color 0.2s;
-	width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-}
-.back-btn:hover {
-	background: #1976d2;
-	color: #fff;
-}
 /* Contenu principal et recherche : filtre des incidents */
 .main-content { padding: 0 32px 32px 32px; }
 .search-bar { margin: 18px 0 12px 0; display: flex; align-items: center; gap: 12px; }

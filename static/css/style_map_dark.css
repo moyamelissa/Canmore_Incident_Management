@@ -31,29 +31,14 @@ body.dark-mode {
     color: #b0b0b0 !important;
 }
 
-/* Champs de formulaire : saisie lisible en sombre */
-input, select, textarea, button {
-    background: #23272a !important;
-    color: #fff !important;
-    border: 1px solid #444 !important;
-}
-input::placeholder, textarea::placeholder {
-    color: #b0b0b0 !important;
-}
-a, a:visited {
-    color: #8ab4f8;
-}
-a:hover {
-    color: #a3d3ff;
-}
 /* Carte : surface sombre coherente */
-.leaflet-container {
+.dark-mode .leaflet-container {
     background: #23272a !important;
 }
 /* Barres de defilement : style adapte au mode sombre */
-::-webkit-scrollbar {
+.dark-mode ::-webkit-scrollbar {
     background: #23272a;
 }
-::-webkit-scrollbar-thumb {
+.dark-mode ::-webkit-scrollbar-thumb {
     background: #444;
 }

@@ -172,7 +172,15 @@
         allIncidents.forEach(inc => {
             const type = (inc.type || '').toString().replace(/"/g, '""');
             const description = (inc.description || '').toString().replace(/"/g, '""');
-            const date = (inc.timestamp || '').toString();
+            // Format date: dd/mm/yyyy (friendly, no time)
+            let date = '';
+            if (inc.timestamp) {
+                const d = new Date(inc.timestamp);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                date = `${day}/${month}/${year}`;
+            }
             const status = (inc.status || '').toString();
             csv += `${inc.id},"${type}","${description}",${date},${status}\n`;
         });
