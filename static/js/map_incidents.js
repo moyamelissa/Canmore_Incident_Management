@@ -25,7 +25,7 @@ window.enableAdminMode = function() {
         localStorage.setItem('isAdmin', 'true');
         // Stocke l'heure de connexion (en ms)
         localStorage.setItem('adminLoginTime', Date.now().toString());
-        alert('Mode administrateur activé !');
+        alert('Mode administrateur activé! Vous avez 10 minutes avant d\'être automatiquement déconnecté.');
         // Met à jour l'interface utilisateur 
         var adminBtn = document.querySelector('.admin-link');
         if (adminBtn) {
@@ -75,15 +75,18 @@ window.addEventListener('DOMContentLoaded', function() {
             if (msLeft < 0) msLeft = 0;
             var min = Math.floor(msLeft / 60000);
             var sec = Math.floor((msLeft % 60000) / 1000);
-            var txt = ' (' + min + 'm ' + (sec < 10 ? '0' : '') + sec + 's avant déconnexion)';
+            var txt = min + 'm ' + (sec < 10 ? '0' : '') + sec + 's';
             if (!timerSpan) {
                 timerSpan = document.createElement('span');
                 timerSpan.id = 'admin-timer';
-                timerSpan.style.marginLeft = '8px';
-                timerSpan.style.fontWeight = 'normal';
-                timerSpan.style.fontSize = '0.95em';
-                    timerSpan.style.color = '#1976d2';
-                adminBtn.parentNode.appendChild(timerSpan);
+                timerSpan.style.marginRight = '8px';
+                timerSpan.style.fontWeight = '500';
+                timerSpan.style.fontSize = '0.9em';
+                timerSpan.style.color = '#c62828';
+                var rightMenu = document.querySelector('.menu-right-modern');
+                if (rightMenu) {
+                    rightMenu.insertBefore(timerSpan, rightMenu.firstChild);
+                }
             }
             timerSpan.textContent = txt;
         }
@@ -93,17 +96,14 @@ window.addEventListener('DOMContentLoaded', function() {
                 adminBtn.style.color = 'green';
                 // Ajoute le bouton de déconnexion admin si absent
                 if (!document.getElementById('admin-logout-btn')) {
+                    var li = document.createElement('li');
                     var logoutBtn = document.createElement('button');
                     logoutBtn.id = 'admin-logout-btn';
+                    logoutBtn.className = 'btn-unified';
                     logoutBtn.textContent = 'Déconnexion Admin';
-                    logoutBtn.style.marginLeft = '10px';
-                        logoutBtn.style.background = '#1976d2';
-                    logoutBtn.style.color = 'white';
-                    logoutBtn.style.border = 'none';
-                    logoutBtn.style.padding = '4px 10px';
-                    logoutBtn.style.borderRadius = '4px';
-                    logoutBtn.style.cursor = 'pointer';
-                    adminBtn.parentNode.appendChild(logoutBtn);
+                    li.appendChild(logoutBtn);
+                    var adminLi = adminBtn.parentNode;
+                    adminLi.parentNode.insertBefore(li, adminLi.nextSibling);
                     logoutBtn.onclick = function() {
                         window.disableAdminMode();
                     };
@@ -124,7 +124,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 adminBtn.textContent = 'Connexion Administrateur';
                 adminBtn.style.color = '';
                 var logoutBtn = document.getElementById('admin-logout-btn');
-                if (logoutBtn) logoutBtn.remove();
+                if (logoutBtn && logoutBtn.parentNode) logoutBtn.parentNode.remove();
                 var timerSpan = document.getElementById('admin-timer');
                 if (timerSpan) timerSpan.remove();
                 if (window._adminTimerInterval) {

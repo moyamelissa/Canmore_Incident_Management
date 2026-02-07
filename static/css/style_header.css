@@ -1,0 +1,174 @@
+/*
+style_header.css
+Styles communs pour l'en-tête de navigation de toutes les pages.
+*/
+
+/* Barre de menu moderne : navigation unifiée pour toutes les pages */
+.top-menu-modern {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0 32px;
+	height: 64px;
+	border-radius: 0 0 18px 18px;
+	box-shadow: 0 2px 12px #0002;
+	margin-bottom: 12px;
+}
+
+.menu-left-modern {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+}
+
+.menu-icons-left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-left: 18px;
+}
+
+.menu-title-modern {
+	font-size: 1.4em;
+	font-weight: 600;
+	color: #23272b;
+	letter-spacing: 0.5px;
+}
+
+.menu-center-modern {
+	display: flex;
+	align-items: center;
+	gap: 32px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.menu-right-modern {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+	position: relative;
+}
+
+/* Icône de retour : navigation vers la page précédente */
+.back-icon-modern {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: auto;
+	height: auto;
+	border-radius: 0;
+	background: none !important;
+	box-shadow: none !important;
+	transition: none;
+	margin-right: 0;
+	padding: 0;
+}
+
+.back-icon-modern:hover {
+	background: none !important;
+	box-shadow: none !important;
+}
+
+.back-icon-modern img {
+	width: 28px;
+	height: 28px;
+	border-radius: 0;
+	box-shadow: none;
+	background: none;
+	opacity: 0.45;
+	transition: opacity 0.2s, filter 0.2s;
+}
+
+.back-icon-modern img:hover {
+	opacity: 0.85;
+	filter: drop-shadow(0 1px 4px #0001);
+}
+
+/* Icônes et boutons : musique, paramètres */
+.icon-modern {
+	width: 28px;
+	height: 28px;
+	cursor: pointer;
+	opacity: 0.45;
+	transition: opacity 0.2s, filter 0.2s;
+}
+
+.icon-modern:hover {
+	opacity: 0.85;
+	filter: drop-shadow(0 1px 4px #0001);
+}
+
+/* Lien d'administration : accès rapide aux fonctions admin */
+.admin-link {
+	text-decoration: none;
+	color: inherit;
+}
+
+/* Bouton unifié : style commun pour toutes les actions */
+.btn-unified {
+	color: #333 !important;
+	font-family: inherit;
+	font-size: inherit;
+	font-weight: 500;
+	cursor: pointer;
+	padding: 8px 16px;
+	border-radius: 6px;
+	transition: background 0.2s, color 0.2s;
+	display: inline-block;
+	background: rgba(255,255,255,0.85);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+	border: 1px solid #e0e0e0;
+	text-decoration: none;
+}
+
+.btn-unified:hover {
+	background: #f5f5f5 !important;
+	color: #23272b !important;
+	box-shadow: none !important;
+	border: none !important;
+}
+
+/* Menu déroulant des filtres : filtrage et options */
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-toggle {
+	color: inherit;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background: #fff;
+	min-width: 180px;
+	box-shadow: 0 2px 8px #0002;
+	border-radius: 8px;
+	padding: 10px 14px;
+	z-index: 1000;
+	top: 110%;
+	left: 0;
+}
+
+.dropdown.show .dropdown-content,
+.dropdown-content.show {
+	display: block;
+}
+
+.dropdown-content label {
+	color: #23272b;
+	font-size: 1em;
+	margin-bottom: 6px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.dropdown-content input[type="checkbox"] {
+	margin-right: 8px;
+}
+

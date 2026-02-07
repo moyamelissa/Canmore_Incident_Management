@@ -147,19 +147,7 @@ h1 {
 	outline: none;
 }
 #search-btn {
-	background: #1976d2;
-	color: #fff;
-	border: none;
-	border-radius: 8px;
-	padding: 8px 18px;
-	font-size: 1em;
-	font-weight: 500;
 	margin-left: 12px;
-	cursor: pointer;
-	transition: background 0.2s;
-}
-#search-btn:hover {
-	background: #125ea2;
 }
 /* Suggestions de recherche : liste d'autocompletion */
 #suggestions ul {

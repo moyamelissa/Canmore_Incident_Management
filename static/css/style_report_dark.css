@@ -17,8 +17,6 @@ body { background: #23272a; color: #fff; font-family: 'Segoe UI', Arial, sans-se
 .summary-card .sub.yellow { color: #ffe066; }
 .summary-card .sub.gray { color: #b0b0b0; }
 /* Boutons d'action : export et commandes rapides */
-.export-btn { background: #1abc9c; color: #fff; border: none; border-radius: 6px; padding: 10px 22px; font-size: 1em; font-weight: 500; cursor: pointer; float: right; margin-top: 8px; margin-bottom: 16px; transition: background 0.2s; }
-.export-btn:hover { background: #159c85; }
 .back-btn {
     display: inline-block;
     background: #23272a;

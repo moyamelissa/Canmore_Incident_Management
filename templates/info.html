@@ -9,42 +9,28 @@
     <meta charset="UTF-8">
     <title>Portail d’information de Canmore</title>
     <!-- Feuilles de style principales et mode sombre -->
+    <link rel="stylesheet" href="/static/css/style_header.css">
     <link rel="stylesheet" href="/static/css/style_info.css">
-    <link rel="stylesheet" href="/static/css/style_report.css">
+    <link rel="stylesheet" href="/static/css/style_header_dark.css" id="header-dark-css" disabled>
     <link rel="stylesheet" href="/static/css/style_info_dark.css" id="dark-css" disabled>
-    <!-- Script de gestion du mode sombre -->
-    <script src="/static/js/theme_toggle.js"></script>
-    <script>
-      // Fetch latest settings from backend in background
-      fetch('/get_user_settings')
-        .then(res => res.json())
-        .then(settings => {
-          if (settings.darkModeGlobal !== undefined) {
-            localStorage.setItem('darkModeGlobal', settings.darkModeGlobal ? 'true' : 'false');
-          }
-        })
-        .catch(() => {}); // Silently fail if fetch errors
-      
-      // Always initialize the theme toggle
-      initThemeToggle({
-        darkCss: '/static/css/style_info_dark.css',
-        storageKey: 'darkModeGlobal',
-        icon: '/static/icons/setting.png',
-        iconClass: '',
-        defaultMode: 'light'
-      });
-    </script>
 </head>
 <body>
-    <!-- En-tête de la page avec retour et titre -->
-    <div class="dashboard-header">
-        <div style="display:flex;align-items:center;gap:18px;">
-            <a href="/" class="back-btn" title="Accueil" style="padding:4px 8px;display:flex;align-items:center;justify-content:center;width:40px;height:40px;">
-                <img src="/static/icons/back.png" alt="Retour" style="width:24px;height:24px;display:block;">
+    <!-- En-tête de navigation unifié -->
+    <nav class="top-menu-modern">
+        <div class="menu-left-modern">
+            <a href="/" class="back-icon-modern" title="Retour à l'accueil">
+                <img src="/static/icons/back_simple.png" alt="Retour à l'accueil">
             </a>
-            <h1 style="margin:0;font-size:2em;">Portail d’information de Canmore</h1>
+            <span class="menu-title-modern">Portail d'information de Canmore</span>
         </div>
-    </div>
+        <div class="menu-center-modern">
+        </div>
+        <div class="menu-right-modern">
+            <button id="settings-btn" style="background:none !important;border:none !important;box-shadow:none !important;cursor:pointer;padding:0;">
+                <img src="/static/icons/setting.png" alt="Paramètres" class="icon-modern">
+            </button>
+        </div>
+    </nav>
     <!-- Cartes de fonctionnalités (parcs, bâtiments, etc.) -->
     <div id="feature-cards" class="feature-cards-vertical" style="margin-bottom:32px;">
         <div class="feature-card" data-type="parcs">
@@ -76,7 +62,7 @@
     <!-- Barre de recherche et suggestions -->
     <div class="search-bar" id="search-bar-container" style="display:none;">
         <input type="text" id="search-input" placeholder="Commencez à taper...">
-        <button id="search-btn">Rechercher</button>
+        <button id="search-btn" class="btn-unified">Rechercher</button>
     </div>
     <div id="suggestions"></div>
     <div id="result"></div>
@@ -213,6 +199,16 @@
             }
         });
     }
+    </script>
+    <script src="/static/js/theme_toggle.js"></script>
+    <script>
+        initThemeToggle({
+            darkCss: '/static/css/style_info_dark.css',
+            storageKey: 'darkModeGlobal',
+            icon: '/static/icons/setting.png',
+            iconClass: 'icon-modern',
+            defaultMode: 'light'
+        });
     </script>
 </body>
 </html>

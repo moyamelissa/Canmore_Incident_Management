@@ -6,7 +6,7 @@
 
 function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'light'}) {
     // Création du bouton paramètres et du modal si absents
-    storageKey = 'darkModeGlobal';
+    storageKey = storageKey || 'darkModeGlobal';
     document.addEventListener('DOMContentLoaded', function() {
         let settingsBtn = document.getElementById('settings-btn');
         if (!settingsBtn) {
@@ -98,6 +98,8 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
         }
         var closeSettings = document.getElementById('close-settings');
         var darkToggle = document.getElementById('darkmode-toggle');
+        var headerDarkCss = document.getElementById('header-dark-css');
+        var pageDarkCss = document.getElementById('dark-css');
         var darkLink = null;
 
         // Gestion du mode sombre (activation/désactivation)
@@ -105,7 +107,10 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
             let modalContent = document.getElementById('settings-modal-content');
             let closeBtn = document.getElementById('close-settings');
             if (on) {
-                if (!darkLink) {
+                if (headerDarkCss) headerDarkCss.disabled = false;
+                if (pageDarkCss) {
+                    pageDarkCss.disabled = false;
+                } else if (darkCss && !darkLink) {
                     darkLink = document.createElement('link');
                     darkLink.rel = 'stylesheet';
                     darkLink.href = darkCss;
@@ -125,10 +130,13 @@ function initThemeToggle({darkCss, storageKey, icon, iconClass, defaultMode = 'l
                     body: JSON.stringify({ [storageKey]: true })
                 });
             } else {
-                if (darkLink) {
+                if (headerDarkCss) headerDarkCss.disabled = true;
+                if (pageDarkCss) {
+                    pageDarkCss.disabled = true;
+                } else if (darkLink) {
                     darkLink.remove();
                     darkLink = null;
-                } else {
+                } else if (darkCss) {
                     var links = document.querySelectorAll('link[href$="' + darkCss.split('/').pop() + '"]');
                     links.forEach(l => l.remove());
                 }
