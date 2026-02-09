@@ -1,4 +1,3 @@
-
 """
 main.py
 Ce script initialise et lance l'application Flask Canmore Incident Management.
@@ -17,6 +16,8 @@ from server.routes.user_settings_api import user_settings_api  # API paramètres
 # Initialisation de l'application principale Flask
 
 # Configuration de la clé secrète pour la gestion des sessions Flask
+# ATTENTION : Cette clé est destinée AU DÉVELOPPEMENT UNIQUEMENT. 
+# Remplacez-la par une valeur secrète et sécurisée en production.
 app = Flask(__name__)
 app.secret_key = 'dev-key-canmore'
 

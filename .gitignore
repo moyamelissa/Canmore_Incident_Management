@@ -36,3 +36,6 @@ Thumbs.db
 
 # Fichiers temporaires
 *.pkl
+
+# Données d'incidents et autres données sensibles
+static/data/
