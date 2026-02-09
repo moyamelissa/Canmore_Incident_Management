@@ -27,30 +27,35 @@ def get_incident_types():
 
     subjects = {}  # Dictionnaire pour regrouper les sujets et leurs détails
 
-    # Ouvre le fichier CSV en gérant le BOM éventuel (utf-8-sig)
-    with codecs.open(csv_path, encoding='utf-8-sig') as csvfile:
-        reader = csv.DictReader(csvfile)
-        # Affiche les noms de colonnes pour le débogage
-        print("Noms des colonnes CSV :", reader.fieldnames)
-        # Normalise les noms de colonnes pour gérer la casse et les espaces
-        fieldnames = {name.strip().upper(): name for name in reader.fieldnames}
-        subject_key = fieldnames.get('SUBJECT')
-        detail_key = fieldnames.get('DETAILS')
-        if not subject_key or not detail_key:
-            # Erreur si les en-têtes ne sont pas corrects
-            return jsonify({'error': 'Le CSV doit contenir les colonnes SUBJECT et DETAILS'}), 400
-        for row in reader:
-            subject = row[subject_key]
-            detail = row[detail_key]
-            # Ignore une éventuelle ligne d'en-tête dans les données
-            if subject.strip().upper() == 'SUBJECT':
-                continue
-            # Ajoute le sujet s'il n'existe pas encore
-            if subject not in subjects:
-                subjects[subject] = []
-            # Ajoute le détail s'il n'est pas déjà présent pour ce sujet
-            if detail not in subjects[subject]:
-                subjects[subject].append(detail)
+    # Ouvre le fichier CSV en gérant le BOM éventuel (utf-8-sig) avec gestion d'erreur
+    try:
+        with codecs.open(csv_path, encoding='utf-8-sig') as csvfile:
+            reader = csv.DictReader(csvfile)
+            # Affiche les noms de colonnes pour le débogage
+            print("Noms des colonnes CSV :", reader.fieldnames)
+            # Normalise les noms de colonnes pour gérer la casse et les espaces
+            fieldnames = {name.strip().upper(): name for name in reader.fieldnames}
+            subject_key = fieldnames.get('SUBJECT')
+            detail_key = fieldnames.get('DETAILS')
+            if not subject_key or not detail_key:
+                # Erreur si les en-têtes ne sont pas corrects
+                return jsonify({'error': 'Le CSV doit contenir les colonnes SUBJECT et DETAILS'}), 400
+            for row in reader:
+                subject = row[subject_key]
+                detail = row[detail_key]
+                # Ignore une éventuelle ligne d'en-tête dans les données
+                if subject.strip().upper() == 'SUBJECT':
+                    continue
+                # Ajoute le sujet s'il n'existe pas encore
+                if subject not in subjects:
+                    subjects[subject] = []
+                # Ajoute le détail s'il n'est pas déjà présent pour ce sujet
+                if detail not in subjects[subject]:
+                    subjects[subject].append(detail)
+    except FileNotFoundError:
+        return jsonify({'error': 'Fichier CSV non trouvé'}), 404
+    except Exception as e:
+        return jsonify({'error': f'Erreur lecture CSV: {str(e)}'}), 500
 
     # Transforme le dictionnaire en liste de dictionnaires pour le frontend
     result = [
