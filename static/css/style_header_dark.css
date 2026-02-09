@@ -1,0 +1,62 @@
+/*
+style_header_dark.css
+Mode sombre pour l'en-tête de navigation de toutes les pages.
+*/
+
+/* Barre de menu en mode sombre : navigation avec contraste */
+.top-menu-modern {
+	background: #23272a !important;
+	color: #fff !important;
+	box-shadow: 0 2px 12px #0008;
+}
+
+.menu-title-modern {
+	color: #fff !important;
+}
+
+/* Icône de retour en mode sombre */
+.back-icon-modern img {
+	filter: invert(1) brightness(2) grayscale(1) !important;
+	background: none !important;
+	opacity: 0.85 !important;
+}
+
+.back-icon-modern img:hover {
+	opacity: 1 !important;
+	filter: brightness(0) invert(1) drop-shadow(0 1px 4px #0003) !important;
+}
+
+/* Icônes et boutons en mode sombre */
+.icon-modern {
+	filter: brightness(0) invert(1) !important;
+	opacity: 0.85 !important;
+}
+
+.icon-modern:hover {
+	opacity: 1 !important;
+	filter: brightness(0) invert(1) drop-shadow(0 1px 4px #0003) !important;
+}
+
+/* Bouton unifié en mode sombre */
+.btn-unified {
+	color: #fff !important;
+	background: #23272a !important;
+	border: 1px solid #444 !important;
+}
+
+.btn-unified:hover {
+	background: #2c3136 !important;
+	color: #e0e0e0 !important;
+	border: 1px solid #555 !important;
+}
+
+.dropdown-content {
+	background: #23272a !important;
+	color: #fff !important;
+	border: 1px solid #444 !important;
+	box-shadow: 0 2px 12px #0008 !important;
+}
+
+.dropdown-content label {
+	color: #fff !important;
+}

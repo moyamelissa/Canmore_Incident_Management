@@ -10,43 +10,30 @@
     <title>Carte interactive - Canmore</title>
     <!-- Feuilles de style et bibliothèques -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/static/css/style_header.css">
     <link rel="stylesheet" href="/static/css/style_map.css">
+    <link rel="stylesheet" href="/static/css/style_header_dark.css" id="header-dark-css" disabled>
+    <link rel="stylesheet" href="/static/css/style_map_dark.css" id="dark-css" disabled>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <script src="/static/js/map_incidents_admin.js"></script>
+    <script src="/static/js/map_incidents_display.js"></script>
+    <script src="/static/js/map_incidents_form.js"></script>
     <script src="/static/js/map_incidents.js"></script>
     <script src="/static/js/theme_toggle.js"></script>
-    <script>
-      // Préférence dark mode utilisateur
-      fetch('/get_user_settings')
-        .then(res => res.json())
-        .then(settings => {
-          if (settings.darkModeGlobal !== undefined) {
-            localStorage.setItem('darkModeGlobal', settings.darkModeGlobal ? 'true' : 'false');
-          }
-        });
-    </script>
-    <script>
-      initThemeToggle({
-        darkCss: '/static/css/style_map_dark.css',
-        storageKey: 'darkModeGlobal',
-        icon: '/static/icons/setting.png',
-        iconClass: 'music-icon-modern',
-        defaultMode: 'light'
-      });
-    </script>
 </head>
 <body>
     <!-- Barre de navigation principale -->
     <nav class="top-menu-modern">
         <div class="menu-left-modern">
-            <a href="/" class="back-icon-modern" title="Retour à l'accueil" style="background:none !important;box-shadow:none !important;border:none !important;">
-                <img src="/static/icons/back_simple.png" alt="Retour à l'accueil" class="menu-logo-modern music-icon-modern" style="width:28px;height:28px;background:none !important;box-shadow:none !important;border:none !important;">
+            <a href="/" class="back-icon-modern" title="Retour à l'accueil">
+                <img src="/static/icons/back_simple.png" alt="Retour à l'accueil">
             </a>
             <span class="menu-title-modern">Gestion des incidents de Canmore</span>
         </div>
         <ul class="menu-center-modern">
             <li class="dropdown">
-                <span class="dropdown-toggle">Options d'affichage</span>
+                <span class="dropdown-toggle btn-unified">Options d'affichage</span>
                 <div class="dropdown-content">
                     <label><input type="checkbox" class="layer-toggle" data-layer="trails" checked> Sentiers</label><br>
                     <label><input type="checkbox" class="layer-toggle" data-layer="parcs" checked> Parcs</label><br>
@@ -55,29 +42,21 @@
                 </div>
             </li>
             <li class="dropdown">
-                <span class="dropdown-toggle">Gestion des incidents</span>
+                <span class="dropdown-toggle btn-unified">Gestion des incidents</span>
                 <div class="dropdown-content">
                     <label><input type="checkbox" class="incident-filter" data-status="unsolved" checked> Incidents non résolus</label><br>
                     <label><input type="checkbox" class="incident-filter" data-status="solved" checked> Incidents résolus</label>
                 </div>
             </li>
+            <li>
+                <a href="#" class="admin-link btn-unified">Connexion Administrateur</a>
+            </li>
         </ul>
         <div class="menu-right-modern">
-            <a href="#" class="admin-link">Connexion Administrateur</a>
-            <img id="music-icon" src="/static/icons/audio_on.png" alt="Toggle Music" class="music-icon-modern" title="Activer/Désactiver la musique">
-            <button id="settings-btn" style="background:none !important;border:none !important;box-shadow:none !important;cursor:pointer;margin-left:12px;vertical-align:middle;">
-                <img src="/static/icons/setting.png" alt="Paramètres" class="music-icon-modern" style="width:28px;height:28px;background:none !important;box-shadow:none !important;border:none !important;">
+            <img id="music-icon" src="/static/icons/audio_on.png" alt="Toggle Music" class="icon-modern" title="Activer/Désactiver la musique">
+            <button id="settings-btn" style="background:none !important;border:none !important;box-shadow:none !important;cursor:pointer;padding:0;">
+                <img src="/static/icons/setting.png" alt="Paramètres" class="icon-modern">
             </button>
-            <!-- Modale paramètres dark mode -->
-            <div id="settings-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.35);z-index:9999;align-items:center;justify-content:center;">
-                <div style="background:#23272a;color:#e0e0e0;border-radius:10px;padding:32px 28px 24px 28px;min-width:320px;box-shadow:0 4px 24px #0005;position:relative;">
-                    <button id="close-settings" style="position:absolute;top:10px;right:14px;background:none;border:none;color:#e0e0e0;font-size:1.5em;cursor:pointer;">&times;</button>
-                    <h2 style="margin-top:0">Paramètres</h2>
-                    <label style="display:flex;align-items:center;margin-bottom:18px;font-size:1.1em;">
-                        <input type="checkbox" id="darkmode-toggle" style="margin-right:12px;transform:scale(1.2);"> Mode sombre
-                    </label>
-                </div>
-            </div>
         </div>
     </nav>
     <!-- Conteneur principal de la carte -->
@@ -87,64 +66,19 @@
     <!-- Musique de fond -->
     <audio id="background-music" src="/static/audio/map_audio.mp3" loop></audio>
     <script>
-        // Gestion du dark mode via bouton paramètres
-        document.addEventListener('DOMContentLoaded', function() {
-            var settingsBtn = document.getElementById('settings-btn');
-            var settingsModal = document.getElementById('settings-modal');
-            var closeSettings = document.getElementById('close-settings');
-            var darkToggle = document.getElementById('darkmode-toggle');
-            // Ajout dynamique du lien style_map_dark.css
-            var darkLink = null;
-            function setDarkMode(on) {
-                if (on) {
-                    if (!darkLink) {
-                        darkLink = document.createElement('link');
-                        darkLink.rel = 'stylesheet';
-                        darkLink.href = '/static/css/style_map_dark.css';
-                        document.head.appendChild(darkLink);
-                    }
-                    document.body.classList.add('dark-mode');
-                    localStorage.setItem('darkMode', 'true');
-                } else {
-                    if (darkLink) {
-                        darkLink.remove();
-                        darkLink = null;
-                    } else {
-                        // Si déjà chargé dans le head (rechargement), on le retire
-                        var links = document.querySelectorAll('link[href$="style_map_dark.css"]');
-                        links.forEach(l => l.remove());
-                    }
-                    document.body.classList.remove('dark-mode');
-                    localStorage.setItem('darkMode', 'false');
-                }
-            }
-            // Initialisation
-            if (localStorage.getItem('darkMode') === 'true') {
-                darkToggle.checked = true;
-                setDarkMode(true);
-            }
-            settingsBtn.addEventListener('click', function() {
-                settingsModal.style.display = 'flex';
-            });
-            closeSettings.addEventListener('click', function() {
-                settingsModal.style.display = 'none';
-            });
-            settingsModal.addEventListener('click', function(e) {
-                if (e.target === settingsModal) settingsModal.style.display = 'none';
-            });
-            darkToggle.addEventListener('change', function() {
-                setDarkMode(darkToggle.checked);
-            });
+        // Initialisation du thème (mode sombre ou clair)
+        initThemeToggle({
+            darkCss: '/static/css/style_map_dark.css',
+            storageKey: 'darkModeGlobal',
+            icon: '/static/icons/setting.png',
+            iconClass: 'icon-modern',
+            defaultMode: 'light'
         });
-        // =========================
-        // Titre: Gestion de l'icône musique
-        // Explication: Gère l'affichage et le contrôle de la musique de fond via l'icône
-        // =========================
+        // Gestion de l'icône musique (affichage et contrôle de la musique de fond)
         document.addEventListener('DOMContentLoaded', function() {
             var musicIcon = document.getElementById('music-icon');
             var music = document.getElementById('background-music');
-            // État initial depuis le localStorage
-            var musicPref = localStorage.getItem('musicOn');
+            // Met à jour l'icône selon l'état de la musique
             function updateMusicIcon() {
                 if (music.paused) {
                     musicIcon.src = '/static/icons/audio_off.png';
@@ -152,39 +86,32 @@
                     musicIcon.src = '/static/icons/audio_on.png';
                 }
             }
-            if (musicPref === null || musicPref === 'true') {
-                music.volume = 0.5;
-                music.play();
-            } else {
-                music.pause();
-            }
+            // La musique démarre en pause par défaut
+            music.pause();
             updateMusicIcon();
+            // Clic sur l'icône musique : joue ou met en pause
             musicIcon.addEventListener('click', function() {
                 if (music.paused) {
+                    music.volume = 0.5;
                     music.play();
-                    localStorage.setItem('musicOn', 'true');
                 } else {
                     music.pause();
-                    localStorage.setItem('musicOn', 'false');
                 }
                 updateMusicIcon();
-                // Sauvegarde de la préférence côté backend
+                // Sauvegarde la préférence côté serveur
                 fetch('/save_user_settings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ musicOn: !music.paused })
                 });
             });
-            // Met à jour l'icône si la musique est jouée/pause autrement
+            // Met à jour l'icône si la musique change d'état autrement
             music.addEventListener('play', updateMusicIcon);
             music.addEventListener('pause', updateMusicIcon);
         });
-        // =========================
-        // Titre: Initialisation et gestion de la carte
-        // Explication: Initialise la carte Leaflet, charge les couches GeoJSON et gère l'affichage des couches
-        // =========================
+        // Initialisation et gestion de la carte interactive
         window.onload = function() {
-            // Utilise window.map pour accès global
+            // Crée la carte Leaflet et centre sur Canmore
             window.map = L.map('map').setView([51.089, -115.359], 13);
 
             // Ajoute les tuiles OpenStreetMap
@@ -193,7 +120,7 @@
                 attribution: '© OpenStreetMap contributors',
             }).addTo(window.map);
 
-            // Styles pour les couches GeoJSON
+            // Styles pour chaque couche GeoJSON
             var styles = {
                 buildings: { color: '#800080', fillColor: '#800080', fillOpacity: 0.4, weight: 1 },
                 trails: { color: '#0074D9', weight: 3, opacity: 0.7 },
@@ -202,7 +129,7 @@
                 city_boundary: { color: '#888888', fillColor: '#888888', fillOpacity: 0.1, weight: 2 },
             };
 
-            // Variables pour stocker les couches
+            // Stocke les couches GeoJSON chargées
             var geojsonLayers = {
                 buildings: null,
                 trails: null,
@@ -211,11 +138,7 @@
                 city_boundary: null,
             };
 
-            // =========================
-            // Titre: Fonction utilitaire de chargement GeoJSON
-            // Explication: Charge une couche GeoJSON et l'ajoute à la carte
-            // =========================
-            // Fonction utilitaire pour charger une couche GeoJSON
+            // Fonction utilitaire : charge une couche GeoJSON et l'ajoute à la carte
             function loadGeoJsonLayer(url, style, name, key) {
                 fetch(url).then(res => res.json()).then(data => {
                     if (key === 'city_boundary') {
@@ -232,22 +155,14 @@
                 });
             }
 
-            // =========================
-            // Titre: Chargement des couches GeoJSON
-            // Explication: Ajoute les différentes couches à la carte
-            // =========================
-            // Chargement des couches GeoJSON
+            // Charge toutes les couches GeoJSON (bâtiments, sentiers, parcs, etc.)
             loadGeoJsonLayer('/static/data/buildings.geojson', styles.buildings, 'Bâtiments', 'buildings');
             loadGeoJsonLayer('/static/data/trails.geojson', styles.trails, 'Sentiers', 'trails');
             loadGeoJsonLayer('/static/data/parcs.geojson', styles.parcs, 'Parcs', 'parcs');
             loadGeoJsonLayer('/static/data/sports_fields.geojson', styles.sports_fields, 'Terrains de sport', 'sports_fields');
             loadGeoJsonLayer('/static/data/city_boundary.geojson', styles.city_boundary, 'Limite de la ville', 'city_boundary');
 
-            // =========================
-            // Titre: Gestion de l'affichage des couches
-            // Explication: Affiche ou masque les couches selon les cases à cocher
-            // =========================
-            // Gestion de l'affichage des couches via les cases à cocher
+            // Affiche ou masque les couches selon les cases à cocher
             document.querySelectorAll('.layer-toggle').forEach(function (checkbox) {
                 checkbox.addEventListener('change', function () {
                     var key = this.getAttribute('data-layer');
@@ -261,13 +176,9 @@
                 });
             });
 
-            // =========================
-            // Titre: Initialisation de la gestion des incidents
-            // Explication: Prépare la logique de signalement et d'affichage des incidents
-            // =========================
-            // Initialisation de la logique de gestion des incidents (voir map_incidents.js)
-            loadCanmoreBoundary('/static/data/city_boundary.geojson', function () {
-                setupIncidentReporting(window.map);
+            // Initialisation de la gestion des incidents (voir map_incidents.js)
+            window.loadCanmoreBoundary('/static/data/city_boundary.geojson', function () {
+                window.setupIncidentReporting(window.map);
             });
         };
     </script>

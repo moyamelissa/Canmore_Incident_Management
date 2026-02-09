@@ -9,21 +9,32 @@
     <meta charset="UTF-8">
     <title>Rapport des incidents</title>
     <!-- Feuilles de style et bibliothèques -->
+    <link rel="stylesheet" href="/static/css/style_header.css">
     <link rel="stylesheet" href="/static/css/style_report.css">
+    <link rel="stylesheet" href="/static/css/style_header_dark.css" id="header-dark-css" disabled>
+    <link rel="stylesheet" href="/static/css/style_report_dark.css" id="dark-css" disabled>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- En-tête du tableau de bord (navigation et statistiques) -->
-    <div class="dashboard-header">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="display:flex;align-items:center;gap:18px;">
-                <a href="/" class="back-btn" title="Accueil" style="padding:4px 8px;display:flex;align-items:center;justify-content:center;width:40px;height:40px;">
-                    <img src="/static/icons/back.png" alt="Retour" style="width:24px;height:24px;display:block;">
-                </a>
-                <h1 style="margin:0;font-size:2em;">Rapport des incidents</h1>
-            </div>
-            <button class="export-btn" id="export-btn" style="margin-left:0;margin-right:48px;">Export CSV</button>
+    <!-- En-tête de navigation unifié -->
+    <nav class="top-menu-modern">
+        <div class="menu-left-modern">
+            <a href="/" class="back-icon-modern" title="Retour à l'accueil">
+                <img src="/static/icons/back_simple.png" alt="Retour à l'accueil">
+            </a>
+            <span class="menu-title-modern">Rapport des incidents</span>
         </div>
+        <div class="menu-center-modern">
+        </div>
+        <div class="menu-right-modern">
+            <button class="export-btn btn-unified" id="export-btn">Export CSV</button>
+            <button id="settings-btn" style="background:none !important;border:none !important;box-shadow:none !important;cursor:pointer;padding:0;margin-left:12px;">
+                <img src="/static/icons/setting.png" alt="Paramètres" class="icon-modern">
+            </button>
+        </div>
+    </nav>
+    <!-- Cartes de résumé des statistiques -->
+    <div style="padding: 12px 32px 0 32px;">
         <div class="summary-cards">
             <div class="summary-card">
                 <div class="label">Incidents résolus</div>
@@ -42,7 +53,7 @@
             </div>
         </div>
     </div>
-    <!-- Contenu principal : recherche, tableau et export -->
+    <!-- Contenu principal : recherche et tableau -->
     <div class="main-content">
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Rechercher par type, description, statut...">
@@ -156,11 +167,24 @@
     // Explication: Permet d'exporter les incidents affichés au format CSV
     // =========================
     document.getElementById('export-btn').addEventListener('click', function() {
-        let csv = 'ID,Type,Description,Date,Statut\n';
+        // Ajoute un BOM UTF-8 pour que Excel lise correctement les accents
+        let csv = '\ufeffID,Type,Description,Date,Statut\n';
         allIncidents.forEach(inc => {
-            csv += `${inc.id},"${inc.type.replace(/"/g,'""')}","${inc.description.replace(/"/g,'""')}",${inc.timestamp},${inc.status}\n`;
+            const type = (inc.type || '').toString().replace(/"/g, '""');
+            const description = (inc.description || '').toString().replace(/"/g, '""');
+            // Format date: dd/mm/yyyy (friendly, no time)
+            let date = '';
+            if (inc.timestamp) {
+                const d = new Date(inc.timestamp);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                date = `${day}/${month}/${year}`;
+            }
+            const status = (inc.status || '').toString();
+            csv += `${inc.id},"${type}","${description}",${date},${status}\n`;
         });
-        const blob = new Blob([csv], {type: 'text/csv'});
+        const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -174,14 +198,13 @@
 </script>
     <!-- WebSocket pour la mise à jour en temps réel -->
     <script src="/static/js/websocket_client.js"></script>
-    <!-- Theme toggle (mode sombre/clair) -->
     <script src="/static/js/theme_toggle.js"></script>
     <script>
         initThemeToggle({
             darkCss: '/static/css/style_report_dark.css',
-            storageKey: 'darkModeReport',
+            storageKey: 'darkModeGlobal',
             icon: '/static/icons/setting.png',
-            iconClass: 'music-icon-modern',
+            iconClass: 'icon-modern',
             defaultMode: 'light'
         });
     </script>

@@ -3,167 +3,19 @@ style_map.css
 Styles pour la page de carte interactive de l'application Canmore Incident Management.
 */
 
-
-.back-icon-modern {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: auto;
-	height: auto;
-	border-radius: 0;
-	background: none !important;
-	box-shadow: none !important;
-	transition: none;
-	margin-right: 0;
-	padding: 0;
-}
-.back-icon-modern:hover {
-	background: none !important;
-	box-shadow: none !important;
-}
-.back-icon-modern img.menu-logo-modern {
-	width: 28px;
-	height: 28px;
-	border-radius: 0;
-	box-shadow: none;
-	background: none;
-	opacity: 0.45;
-	transition: opacity 0.2s, filter 0.2s;
-}
-.back-icon-modern img.menu-logo-modern:hover {
-	opacity: 0.85;
-	filter: drop-shadow(0 1px 4px #0001);
-}
-.music-icon-modern {
-	width: 32px;
-	height: 32px;
-	cursor: pointer;
-	opacity: 0.45;
-	transition: opacity 0.2s, filter 0.2s;
-}
-.music-icon-modern:hover {
-	opacity: 0.85;
-	filter: drop-shadow(0 1px 4px #0001);
-}
-
+/* Zone carte : conteneur Leaflet en pleine page */
 .top-menu-modern {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	background: #fff;
-	padding: 0 32px;
-	height: 64px;
-	border-radius: 0 0 18px 18px;
-	box-shadow: 0 2px 12px #0002;
-	margin-bottom: 12px;
-}
-.menu-left-modern {
-	display: flex;
-	align-items: center;
-	gap: 18px;
-}
-.menu-logo-modern {
-	width: 38px;
-	height: 38px;
-	border-radius: 8px;
-	background: #fff;
-	box-shadow: 0 1px 4px #0001;
-}
-.menu-title-modern {
-	font-size: 1.4em;
-	font-weight: 600;
-	color: #23272b;
-	letter-spacing: 0.5px;
-}
-.menu-center-modern {
-	display: flex;
-	align-items: center;
-	gap: 32px;
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-.menu-right-modern {
-	display: flex;
-	align-items: center;
-	gap: 18px;
-	position: relative;
-}
-.admin-link {
-	color: #333 !important;
-	font-weight: 500;
-	text-decoration: none;
-	padding: 8px 16px;
-	border-radius: 6px;
-	transition: background 0.2s, color 0.2s;
-	background: none;
-}
-.admin-link:hover {
-	background: #f5f5f5 !important;
-	color: #23272b !important;
-}
-
-.dropdown {
-	position: relative;
-	display: inline-block;
-}
-.dropdown-toggle {
-	color: #333 !important;
-	font-weight: 500;
-	cursor: pointer;
-	padding: 8px 16px;
-	border-radius: 6px;
-	transition: background 0.2s, color 0.2s;
-	display: inline-block;
-	background: rgba(255,255,255,0.85);
-	box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-	border: 1px solid #e0e0e0;
-}
-.menu-center-modern .dropdown-toggle {
-	color: #333 !important;
-}
-.dropdown-toggle:hover {
-	background: #f5f5f5 !important;
-	color: #23272b !important;
-	box-shadow: none !important;
-	border: none !important;
-}
-.dropdown-content {
-	display: none;
-	position: absolute;
-	background: #fff;
-	min-width: 180px;
-	box-shadow: 0 2px 8px #0002;
-	border-radius: 8px;
-	padding: 10px 14px;
-	z-index: 1000;
-	top: 110%;
-	left: 0;
-}
-.dropdown.show .dropdown-content,
-.dropdown-content.show {
-	display: block;
-}
-.dropdown-content label {
-	color: #23272b;
-	font-size: 1em;
-	margin-bottom: 6px;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-.dropdown-content input[type="checkbox"] {
-	margin-right: 8px;
+	margin-bottom: 0;
 }
 
 #map-container {
 	position: absolute;
-	top: 56px; 
+	top: 64px; 
 	left: 0;
 	right: 0;
 	bottom: 0;
 	width: 100%;
-	height: calc(100% - 56px);
+	height: calc(100% - 64px);
 	background: #eaeaea;
 	overflow: hidden;
 }
@@ -173,6 +25,7 @@ Styles pour la page de carte interactive de l'application Canmore Incident Manag
 	min-height: 300px;
 }
 
+/* Base globale : pleine hauteur pour la carte */
 body, html {
 	height: 100%;
 	margin: 0;
@@ -180,6 +33,7 @@ body, html {
 	box-sizing: border-box;
 }
 
+/* Ajustement des listes dans les popups Leaflet : evite les debordements */
 .leaflet-popup-content select {
 	max-width: 220px;
 	width: 100%;

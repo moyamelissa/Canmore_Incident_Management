@@ -3,6 +3,14 @@ style_map_dark.css
 Mode sombre pour la page de carte interactive de l'application Canmore Incident Management.
 */
 
+/* Base globale du mode sombre : fond et texte */
+.dark-mode,
+body.dark-mode {
+    background: #23272a;
+    color: #fff;
+}
+
+/* Popups Leaflet en mode sombre : lisibilite des formulaires */
 .dark-mode .leaflet-popup-content-wrapper,
 .dark-mode .leaflet-popup-tip {
     background: #23272a !important;
@@ -13,8 +21,7 @@ Mode sombre pour la page de carte interactive de l'application Canmore Incident 
 .dark-mode .leaflet-popup-content label,
 .dark-mode .leaflet-popup-content select,
 .dark-mode .leaflet-popup-content textarea,
-.dark-mode .leaflet-popup-content input,
-.dark-mode .leaflet-popup-content button {
+.dark-mode .leaflet-popup-content input {
     color: #fff !important;
     background: #23272a !important;
     border-color: #444 !important;
@@ -23,100 +30,15 @@ Mode sombre pour la page de carte interactive de l'application Canmore Incident 
 .dark-mode .leaflet-popup-content input::placeholder {
     color: #b0b0b0 !important;
 }
-.music-icon-modern,
-#settings-btn img,
-.music-icon-modern {
-    filter: brightness(0) invert(1) !important;
-    opacity: 0.85 !important;
-    transition: filter 0.2s, opacity 0.2s;
-}
-.back-icon-modern img.menu-logo-modern {
-    filter: invert(1) brightness(2) grayscale(1) !important;
-    background: none !important;
-    opacity: 0.85 !important;
-    transition: filter 0.2s, opacity 0.2s;
-}
-#settings-btn img {
-    filter: brightness(0) invert(1) !important;
-    opacity: 0.85 !important;
-    transition: filter 0.2s, opacity 0.2s;
-}
-.music-icon-modern:hover,
-.back-icon-modern img.menu-logo-modern:hover,
-#settings-btn img:hover {
-    opacity: 1 !important;
-    filter: brightness(0) invert(1) drop-shadow(0 1px 4px #0003) !important;
-}
 
-.dark-mode,
-body.dark-mode {
-    background: #23272a;
-    color: #fff;
-}
-.top-menu-modern {
-    background: #23272a !important;
-    color: #fff !important;
-    box-shadow: 0 2px 12px #0008;
-}
-.menu-title-modern {
-    color: #fff !important;
-}
-.menu-logo-modern, .back-icon-modern {
-    background: #23272a !important;
-    box-shadow: 0 1px 4px #0008 !important;
-}
-.menu-center-modern .dropdown-toggle,
-.dropdown-toggle {
-    color: #fff !important;
-    background: #23272a !important;
-    border: 1px solid #444 !important;
-}
-.dropdown-toggle:hover {
-    background: #23272a !important;
-    color: #8ab4f8 !important;
-}
-.dropdown-content {
-    background: #23272a !important;
-    color: #fff !important;
-    border: 1px solid #444 !important;
-    box-shadow: 0 2px 12px #0008 !important;
-}
-.dropdown-content label {
-    color: #fff !important;
-}
-.admin-link {
-    color: #fff !important;
-    background: none !important;
-}
-.admin-link:hover {
-    background: #23272a !important;
-    color: #8ab4f8 !important;
-}
-input, select, textarea, button {
-    background: #23272a !important;
-    color: #fff !important;
-    border: 1px solid #444 !important;
-}
-input::placeholder, textarea::placeholder {
-    color: #b0b0b0 !important;
-}
-a, a:visited {
-    color: #8ab4f8;
-}
-a:hover {
-    color: #a3d3ff;
-}
-.leaflet-container {
+/* Carte : surface sombre coherente */
+.dark-mode .leaflet-container {
     background: #23272a !important;
 }
-table, th, td {
-    background: #23272a !important;
-    color: #fff !important;
-    border-color: #444 !important;
-}
-::-webkit-scrollbar {
+/* Barres de defilement : style adapte au mode sombre */
+.dark-mode ::-webkit-scrollbar {
     background: #23272a;
 }
-::-webkit-scrollbar-thumb {
+.dark-mode ::-webkit-scrollbar-thumb {
     background: #444;
 }
