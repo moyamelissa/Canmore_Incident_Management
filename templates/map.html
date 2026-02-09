@@ -66,6 +66,7 @@
     <!-- Musique de fond -->
     <audio id="background-music" src="/static/audio/map_audio.mp3" loop></audio>
     <script>
+        // Initialisation du thème (mode sombre ou clair)
         initThemeToggle({
             darkCss: '/static/css/style_map_dark.css',
             storageKey: 'darkModeGlobal',
@@ -73,13 +74,11 @@
             iconClass: 'icon-modern',
             defaultMode: 'light'
         });
-        // =========================
-        // Titre: Gestion de l'icône musique
-        // Explication: Gère l'affichage et le contrôle de la musique de fond via l'icône
-        // =========================
+        // Gestion de l'icône musique (affichage et contrôle de la musique de fond)
         document.addEventListener('DOMContentLoaded', function() {
             var musicIcon = document.getElementById('music-icon');
             var music = document.getElementById('background-music');
+            // Met à jour l'icône selon l'état de la musique
             function updateMusicIcon() {
                 if (music.paused) {
                     musicIcon.src = '/static/icons/audio_off.png';
@@ -87,9 +86,10 @@
                     musicIcon.src = '/static/icons/audio_on.png';
                 }
             }
-            // Music starts paused by default
+            // La musique démarre en pause par défaut
             music.pause();
             updateMusicIcon();
+            // Clic sur l'icône musique : joue ou met en pause
             musicIcon.addEventListener('click', function() {
                 if (music.paused) {
                     music.volume = 0.5;
@@ -98,23 +98,20 @@
                     music.pause();
                 }
                 updateMusicIcon();
-                // Sauvegarde de la préférence côté backend
+                // Sauvegarde la préférence côté serveur
                 fetch('/save_user_settings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ musicOn: !music.paused })
                 });
             });
-            // Met à jour l'icône si la musique est jouée/pause autrement
+            // Met à jour l'icône si la musique change d'état autrement
             music.addEventListener('play', updateMusicIcon);
             music.addEventListener('pause', updateMusicIcon);
         });
-        // =========================
-        // Titre: Initialisation et gestion de la carte
-        // Explication: Initialise la carte Leaflet, charge les couches GeoJSON et gère l'affichage des couches
-        // =========================
+        // Initialisation et gestion de la carte interactive
         window.onload = function() {
-            // Utilise window.map pour accès global
+            // Crée la carte Leaflet et centre sur Canmore
             window.map = L.map('map').setView([51.089, -115.359], 13);
 
             // Ajoute les tuiles OpenStreetMap
@@ -123,7 +120,7 @@
                 attribution: '© OpenStreetMap contributors',
             }).addTo(window.map);
 
-            // Styles pour les couches GeoJSON
+            // Styles pour chaque couche GeoJSON
             var styles = {
                 buildings: { color: '#800080', fillColor: '#800080', fillOpacity: 0.4, weight: 1 },
                 trails: { color: '#0074D9', weight: 3, opacity: 0.7 },
@@ -132,7 +129,7 @@
                 city_boundary: { color: '#888888', fillColor: '#888888', fillOpacity: 0.1, weight: 2 },
             };
 
-            // Variables pour stocker les couches
+            // Stocke les couches GeoJSON chargées
             var geojsonLayers = {
                 buildings: null,
                 trails: null,
@@ -141,11 +138,7 @@
                 city_boundary: null,
             };
 
-            // =========================
-            // Titre: Fonction utilitaire de chargement GeoJSON
-            // Explication: Charge une couche GeoJSON et l'ajoute à la carte
-            // =========================
-            // Fonction utilitaire pour charger une couche GeoJSON
+            // Fonction utilitaire : charge une couche GeoJSON et l'ajoute à la carte
             function loadGeoJsonLayer(url, style, name, key) {
                 fetch(url).then(res => res.json()).then(data => {
                     if (key === 'city_boundary') {
@@ -162,22 +155,14 @@
                 });
             }
 
-            // =========================
-            // Titre: Chargement des couches GeoJSON
-            // Explication: Ajoute les différentes couches à la carte
-            // =========================
-            // Chargement des couches GeoJSON
+            // Charge toutes les couches GeoJSON (bâtiments, sentiers, parcs, etc.)
             loadGeoJsonLayer('/static/data/buildings.geojson', styles.buildings, 'Bâtiments', 'buildings');
             loadGeoJsonLayer('/static/data/trails.geojson', styles.trails, 'Sentiers', 'trails');
             loadGeoJsonLayer('/static/data/parcs.geojson', styles.parcs, 'Parcs', 'parcs');
             loadGeoJsonLayer('/static/data/sports_fields.geojson', styles.sports_fields, 'Terrains de sport', 'sports_fields');
             loadGeoJsonLayer('/static/data/city_boundary.geojson', styles.city_boundary, 'Limite de la ville', 'city_boundary');
 
-            // =========================
-            // Titre: Gestion de l'affichage des couches
-            // Explication: Affiche ou masque les couches selon les cases à cocher
-            // =========================
-            // Gestion de l'affichage des couches via les cases à cocher
+            // Affiche ou masque les couches selon les cases à cocher
             document.querySelectorAll('.layer-toggle').forEach(function (checkbox) {
                 checkbox.addEventListener('change', function () {
                     var key = this.getAttribute('data-layer');
@@ -191,11 +176,7 @@
                 });
             });
 
-            // =========================
-            // Titre: Initialisation de la gestion des incidents
-            // Explication: Prépare la logique de signalement et d'affichage des incidents
-            // =========================
-            // Initialisation de la logique de gestion des incidents (voir map_incidents.js)
+            // Initialisation de la gestion des incidents (voir map_incidents.js)
             window.loadCanmoreBoundary('/static/data/city_boundary.geojson', function () {
                 window.setupIncidentReporting(window.map);
             });

@@ -78,7 +78,7 @@
     };
     let dataCache = {};
     let currentType = null;
-    // Parse CSV
+    // Analyse le texte CSV et retourne un tableau d'objets
     function parseCSV(text) {
         const lines = text.trim().split('\n');
         const headers = lines[0].split(',');
@@ -89,7 +89,7 @@
             return obj;
         });
     }
-    // Load and sort data for a type
+    // Charge et trie les données pour un type de ressource (parcs, bâtiments, etc.)
     function loadData(type, callback) {
         if (dataCache[type]) { callback(dataCache[type]); return; }
         fetch(csvConfig[type].file)
@@ -101,7 +101,7 @@
                 callback(arr);
             });
     }
-    // Binary search for exact match
+    // Recherche binaire pour une correspondance exacte (nécessite un tableau trié)
     function binarySearch(arr, key, target) {
         let left = 0, right = arr.length - 1;
         target = target.toUpperCase();
@@ -114,12 +114,12 @@
         }
         return null;
     }
-    // Linear search for partial matches
+    // Recherche linéaire pour toutes les correspondances partielles (suggestions dynamiques)
     function partialSearch(arr, key, query) {
         query = query.toUpperCase();
         return arr.filter(row => row[key].toUpperCase().startsWith(query));
     }
-    // Feature card click
+    // Gestion du clic sur une carte de fonctionnalité (parc, bâtiment, etc.)
     document.querySelectorAll('.feature-card').forEach(card => {
         card.onclick = function() {
             currentType = this.getAttribute('data-type');
@@ -130,7 +130,7 @@
             document.getElementById('search-input').value = '';
         };
     });
-    // Show suggestions as user types
+    // Affiche les suggestions au fur et à mesure que l'utilisateur tape
     document.getElementById('search-input').addEventListener('input', function() {
         let query = this.value.trim();
         let suggestionsDiv = document.getElementById('suggestions');
@@ -147,13 +147,13 @@
             }
         });
     });
-    // Select suggestion
+    // Sélectionne une suggestion (clic sur une suggestion)
     window.selectSuggestion = function(val) {
         document.getElementById('search-input').value = val;
         document.getElementById('suggestions').innerHTML = '';
         document.getElementById('search-btn').click();
     }
-    // Search button click
+    // Gestion du clic sur le bouton de recherche
     document.getElementById('search-btn').onclick = function() {
         let query = document.getElementById('search-input').value.trim();
         if (!query || !currentType) return;
@@ -163,7 +163,7 @@
             if (found) {
                 let html = `<div class='info-card'>`;
                 if(currentType === 'parcs') {
-                    // Determine size category based on Shape_len
+                    // Détermine la catégorie de taille selon Shape_len
                     let len = parseFloat(found['Shape_len']);
                     let size = 'Petit';
                     if(len > 1200) size = 'Grand';
