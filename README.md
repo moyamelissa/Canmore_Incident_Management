@@ -13,9 +13,9 @@ Canmore Incident Management is a web-based incident reporting and tracking appli
 ## ✨ Features
 
 - 🗺️ **Interactive Map** - Report and visualize incidents on a live map
-- 🔍 **Advanced Filtering** - Filter incidents by type and resolution status
-- 👤 **User Preferences** - Persistent dark mode and personalized settings
 - 🛡️ **Dashboard** - Overview of the incident statuses
+- 📚 **Information Search ** — Quickly look up adresses, parcs, incidents and more!
+- 👤 **User Preferences** - Persistent dark mode and personalized settings
 - ⚡ **Real-time Notifications** - WebSocket-powered live updates
 
 ## 🛠️ Technologies Used
@@ -147,12 +147,11 @@ Canmore Incident Management est une application web de signalement et de suivi d
 
 ## ✨ Fonctionnalités
 
-- 🗺️ **Carte Interactive** - Signalez et visualisez les incidents sur une carte en direct
-- 🔍 **Filtrage Avancé** - Filtrez les incidents par type et statut de résolution
-- 👤 **Préférences Utilisateur** - Mode sombre persistant et paramètres personnalisés
-- ⚡ **Notifications en Temps Réel** - Mises à jour en direct via WebSocket
-- 🛡️ **Tableau de Bord Admin** - Gérez les statuts et permissions des incidents
-- 📱 **Design Responsive** - Fonctionne parfaitement sur ordinateur et mobile
+- 🗺️ **Carte interactive** — Signalez et visualisez les incidents sur une carte en temps réel  
+- 🛡️ **Tableau de bord** — Vue d’ensemble des statuts des incidents  
+- 📚 **Recherche d'informations** — Recherchez rapidement des adresses, des parcs, des incidents et plus encore !  
+- 👤 **Préférences utilisateur** — Mode sombre persistant et paramètres personnalisés  
+- ⚡ **Notifications en temps réel** — Mises à jour instantanées grâce à WebSocket 
 
 ## 🛠️ Technologies Utilisées
 
@@ -249,114 +248,6 @@ L'application sera accessible sur `http://localhost:5000`
    - Activez le mode sombre pour une utilisation nocturne confortable
    - Les paramètres sont sauvegardés entre les sessions
 
-## 🧪 Tests et Gestion des Erreurs
-
-### Exécuter les Tests
-
-Lancez la suite de tests:
-```bash
-python -m pytest test_incidents.py -v
-```
-
-Ou avec couverture de code:
-```bash
-python -m pytest test_incidents.py --cov=server --cov-report=term
-```
-
-### Implémentation de la Gestion des Erreurs
-
-Le projet implémente une gestion complète des erreurs par exceptions:
-
-#### 1. **Erreurs de Base de Données** (`incidents_api.py`)
-```python
-try:
-    conn = get_db_connection()
-    conn.execute('INSERT INTO incidents ...')
-except Exception as e:
-    logger.error(f"Erreur BD: {e}")
-    return jsonify({'error': 'Erreur base de données'}), 500
-```
-
-#### 2. **Erreurs d'Entrées/Sorties** (`incident_types.py`)
-```python
-try:
-    with codecs.open(csv_path, encoding='utf-8-sig') as csvfile:
-        reader = csv.DictReader(csvfile)
-except FileNotFoundError:
-    return jsonify({'error': 'Fichier CSV non trouvé'}), 404
-except Exception as e:
-    return jsonify({'error': f'Erreur lecture CSV: {str(e)}'}), 500
-```
-
-#### 3. **Erreurs Requêtes HTTP** (`websocket_server.py`)
-```python
-try:
-    await client.send(msg)
-except Exception as e:
-    logger.error(f"Erreur broadcast: {e}")
-```
-
-#### 4. **Erreurs de Validation** (`incidents_api.py`)
-```python
-required_fields = ['type', 'description', 'latitude', 'longitude', 'timestamp']
-if not all(field in data for field in required_fields):
-    return jsonify({'error': 'Champs manquants'}), 400
-```
-
-#### 5. **Gestion des Erreurs Frontend** (`map_incidents.js`)
-```javascript
-.catch(err => {
-    alert('Erreur: ' + err.message);
-    logger.error(err);
-});
-```
-
-### Couverture des Tests
-
-- ✅ **Tests des API** - Opérations POST, GET, PATCH, DELETE
-- ✅ **Tests de Validation** - Champs requis, types de données, contraintes
-- ✅ **Tests de Gestion d'Erreurs** - Gestion des exceptions et récupération
-- ✅ **Tests d'Intégration** - Persistance en BD et mises à jour WebSocket
-- ✅ **Tests des Routes** - Pages statiques et rendu des templates
-
-## 📁 Structure du Projet
-
-```
-Canmore_Incident_Management/
-├── main.py                      # Application Flask principale
-├── websocket_server.py          # Serveur WebSocket pour mises à jour
-├── requirements.txt             # Dépendances Python
-├── README.md                    # Ce fichier
-│
-├── config/
-│   ├── user_settings.py        # Gestion des préférences utilisateur
-│   └── __pycache__/
-│
-├── server/
-│   ├── routes/                 # Blueprints Flask (routes)
-│   │   ├── home_route.py       # Page d'accueil
-│   │   ├── map_route.py        # Page carte
-│   │   ├── report_route.py     # Page signalement
-│   │   ├── info_route.py       # Page informations
-│   │   ├── incident_types.py   # API types d'incidents
-│   │   ├── incidents_api.py    # API incidents
-│   │   └── user_settings_api.py# API paramètres utilisateur
-│   └── data/                   # Fichiers de données
-│
-├── static/                      # Ressources statiques
-│   ├── css/                    # Feuilles de style
-│   ├── js/                     # Scripts côté client
-│   ├── data/                   # Données GeoJSON et CSV
-│   ├── img/                    # Images
-│   ├── icons/                  # Icônes UI
-│   └── audio/                  # Effets sonores
-│
-└── templates/                   # Templates HTML (Jinja2)
-    ├── home.html
-    ├── map.html
-    ├── report.html
-    └── info.html
-```
 
 ## 👩‍💻 Crédits
 
