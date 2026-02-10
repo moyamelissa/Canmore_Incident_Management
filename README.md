@@ -10,11 +10,16 @@
 
 Canmore Incident Management is a web-based incident reporting and tracking application for the City of Canmore. Report incidents directly on an interactive map, track their status in real-time, and manage administrative tasks with an intuitive interface.
 
+## 🚀 Live Demo
+
+- YouTube Demo: [Link TBD]
+- Deployed Web App: [https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/](https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/)
+
 ## ✨ Features
 
 - 🗺️ **Interactive Map** - Report and visualize incidents on a live map
 - 🛡️ **Dashboard** - Overview of the incident statuses
-- 📚 **Information Search ** — Quickly look up adresses, parcs, incidents and more!
+- 📚 **Information Search** — Quickly look up adresses, parcs, incidents and more!
 - 👤 **User Preferences** - Persistent dark mode and personalized settings
 - ⚡ **Real-time Notifications** - WebSocket-powered live updates
 
@@ -144,6 +149,11 @@ This project is licensed under the MIT License. See the LICENSE file for more in
 ## 📋 Aperçu
 
 Canmore Incident Management est une application web de signalement et de suivi d'incidents pour la Ville de Canmore. Signalez des incidents directement sur une carte interactive, suivez leur statut en temps réel et gérez les tâches administratives via une interface intuitive.
+
+## 🚀 Démo en ligne
+
+- Démo YouTube : [Lien à venir]
+- Application déployée : [https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/](https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/)
 
 ## ✨ Fonctionnalités
 
