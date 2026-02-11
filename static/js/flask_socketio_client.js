@@ -1,7 +1,5 @@
-/**
- * websocket_client.js
- * Client WebSocket pour la mise à jour en temps réel de l'application.
- */
+// flask_socketio_client.js (anciennement websocket_client.js)
+// Client Socket.IO pour la mise à jour en temps réel de l'application.
 
 // Assurez-vous d'inclure la bibliothèque Socket.IO dans votre HTML :
 // <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
@@ -60,6 +58,10 @@ socket.on('disconnect', function() {
     wsErr.style.fontWeight = 'bold';
     wsErr.style.zIndex = '9999';
     wsErr.style.fontSize = '1.1em';
+    wsErr.style.fontFamily = 'sans-serif';
+    wsErr.style.letterSpacing = '0.5px';
+    wsErr.style.textAlign = 'center';
+    wsErr.style.pointerEvents = 'none';
     document.body.appendChild(wsErr);
     setTimeout(() => wsErr.remove(), 3500);
 });
