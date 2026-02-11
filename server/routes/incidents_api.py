@@ -6,7 +6,7 @@ pour l'application Canmore Incident Management.
 '''
 
 import requests
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 import sqlite3
 import os
 
@@ -63,10 +63,8 @@ def delete_incident(incident_id):
     conn.execute('DELETE FROM incidents WHERE id = ?', (incident_id,))
     conn.commit()
     conn.close()
-    # Notifie les clients en temps réel via Flask-SocketIO (à adapter selon votre logique)
-    # Par exemple, vous pouvez émettre un événement Socket.IO ici si besoin
-    # socketio.emit('incident_deleted', {'id': incident_id})
-    # (nécessite d'importer socketio depuis main.py ou d'utiliser un signal)
+    # Notifie les clients en temps réel via Flask-SocketIO
+    current_app.socketio.emit('incident_deleted', {'id': incident_id})
     return jsonify({'message': 'Incident supprimé avec succès'}), 200
 
 @incidents_api.route('/api/incidents/<int:incident_id>', methods=['PATCH'])
@@ -86,8 +84,8 @@ def update_incident_status(incident_id):
     conn.commit()
     conn.close()
     print("Statut de l'incident mis à jour avec succès", file=sys.stderr)
-    # Notifie les clients en temps réel via Flask-SocketIO (à adapter selon votre logique)
-    # socketio.emit('incident_updated', {'id': incident_id, 'status': data['status']})
+    # Notifie les clients en temps réel via Flask-SocketIO
+    current_app.socketio.emit('incident_updated', {'id': incident_id, 'status': data['status']})
     return jsonify({'message': "Statut de l'incident mis à jour avec succès"}), 200
 
 @incidents_api.route('/api/incidents', methods=['POST'])
@@ -107,8 +105,8 @@ def add_incident():
     )
     conn.commit()
     conn.close()
-    # Notifie les clients en temps réel via Flask-SocketIO (à adapter selon votre logique)
-    # socketio.emit('incident_added', {'id': ...})
+    # Notifie les clients en temps réel via Flask-SocketIO
+    current_app.socketio.emit('incident_added', {'type': data['type'], 'description': data['description'], 'latitude': data['latitude'], 'longitude': data['longitude'], 'timestamp': data['timestamp'], 'status': status})
     return jsonify({'message': 'Incident ajouté avec succès'}), 201
 
 @incidents_api.route('/api/incidents', methods=['GET'])

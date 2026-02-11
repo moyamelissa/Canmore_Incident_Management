@@ -44,6 +44,49 @@ socket.on('message', function(msg) {
     }
 });
 
+socket.on('incident_added', function(data) {
+    if (typeof window.displayAllIncidents === 'function' && window.map) {
+        window.displayAllIncidents(window.map);
+    }
+    if (typeof updateTable === 'function' && typeof updateSummary === 'function') {
+        fetch('/api/incidents')
+            .then(res => res.json())
+            .then(data => {
+                allIncidents = data;
+                updateTable(data);
+                updateSummary(data);
+            });
+    }
+});
+socket.on('incident_updated', function(data) {
+    if (typeof window.displayAllIncidents === 'function' && window.map) {
+        window.displayAllIncidents(window.map);
+    }
+    if (typeof updateTable === 'function' && typeof updateSummary === 'function') {
+        fetch('/api/incidents')
+            .then(res => res.json())
+            .then(data => {
+                allIncidents = data;
+                updateTable(data);
+                updateSummary(data);
+            });
+    }
+});
+socket.on('incident_deleted', function(data) {
+    if (typeof window.displayAllIncidents === 'function' && window.map) {
+        window.displayAllIncidents(window.map);
+    }
+    if (typeof updateTable === 'function' && typeof updateSummary === 'function') {
+        fetch('/api/incidents')
+            .then(res => res.json())
+            .then(data => {
+                allIncidents = data;
+                updateTable(data);
+                updateSummary(data);
+            });
+    }
+});
+
 socket.on('disconnect', function() {
     const wsErr = document.createElement('div');
     wsErr.textContent = 'Connexion Socket.IO perdue : la mise à jour en temps réel est désactivée.';

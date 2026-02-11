@@ -5,6 +5,9 @@ Il configure les blueprints (routes), les APIs, et démarre le serveur en mode d
 """
 
 # Importation des modules nécessaires pour Flask et les routes de l'application
+from config.logging_config import configure_logging
+configure_logging()
+
 from flask import Flask, session, redirect, request, url_for
 from server.routes.home_route import home_bp  # Page d'accueil
 from server.routes.map_route import map_bp    # Page de la carte
@@ -23,6 +26,7 @@ import os
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-key-canmore')
 socketio = SocketIO(app, cors_allowed_origins="*")
+app.socketio = socketio
 
 # Enregistrement des blueprints (routes) dans l'application Flask
 from server.routes.info_route import info_bp  # Page d'informations
@@ -36,4 +40,5 @@ app.register_blueprint(info_bp)              # Informations
 
 # Démarrage du serveur Flask (en mode debug pour le développement)
 if __name__ == "__main__":
+    print("Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)")
     socketio.run(app, debug=True)
