@@ -54,6 +54,22 @@ Canmore Incident Management is a web-based incident reporting and tracking appli
    pip install -r requirements.txt
    ```
 
+5. **Python version required:**
+   - This project requires **Python 3.12 or higher**. If you use an older version, some features (especially real-time updates) may not work.
+
+6. **Secret key (optional, for production):**
+   - By default, a development secret key is used for Flask sessions.
+   - For better security in production, set the environment variable `FLASK_SECRET_KEY` before running the app:
+     ```bash
+     set FLASK_SECRET_KEY=your-very-secret-key
+     ```
+   - If not set, the app will still work for local development and testing.
+
+7. **Run the application:**
+   ```bash
+   python main.py
+   ```
+
 ### Linux / macOS
 
 1. **Install Python 3.x**
@@ -79,6 +95,22 @@ Canmore Incident Management is a web-based incident reporting and tracking appli
 5. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
+   ```
+
+6. **Python version required:**
+   - This project requires **Python 3.12 or higher**. If you use an older version, some features (especially real-time updates) may not work.
+
+7. **Secret key (optional, for production):**
+   - By default, a development secret key is used for Flask sessions.
+   - For better security in production, set the environment variable `FLASK_SECRET_KEY` before running the app:
+     ```bash
+     export FLASK_SECRET_KEY=your-very-secret-key
+     ```
+   - If not set, the app will still work for local development and testing.
+
+8. **Run the application:**
+   ```bash
+   python main.py
    ```
 
 ## 🚀 Launching the Application
@@ -194,6 +226,22 @@ Canmore Incident Management est une application web de signalement et de suivi d
    pip install -r requirements.txt
    ```
 
+5. **Version de Python requise:**
+   - Ce projet nécessite **Python 3.12 ou supérieur**. Si vous utilisez une version plus ancienne, certaines fonctionnalités (notamment les mises à jour en temps réel) peuvent ne pas fonctionner.
+
+6. **Clé secrète (optionnel, pour la production):**
+   - Par défaut, une clé secrète de développement est utilisée pour les sessions Flask.
+   - Pour une meilleure sécurité en production, définissez la variable d'environnement `FLASK_SECRET_KEY` avant de lancer l'application :
+     ```bash
+     set FLASK_SECRET_KEY=your-very-secret-key
+     ```
+   - Si elle n'est pas définie, l'application fonctionnera toujours pour le développement local et les tests.
+
+7. **Lancer l'application:**
+   ```bash
+   python main.py
+   ```
+
 ### Linux / macOS
 
 1. **Installer Python 3.x**
@@ -219,6 +267,22 @@ Canmore Incident Management est une application web de signalement et de suivi d
 5. **Installer les dépendances:**
    ```bash
    pip install -r requirements.txt
+   ```
+
+6. **Version de Python requise:**
+   - Ce projet nécessite **Python 3.12 ou supérieur**. Si vous utilisez une version plus ancienne, certaines fonctionnalités (notamment les mises à jour en temps réel) peuvent ne pas fonctionner.
+
+7. **Clé secrète (optionnel, pour la production):**
+   - Par défaut, une clé secrète de développement est utilisée pour les sessions Flask.
+   - Pour une meilleure sécurité en production, définissez la variable d'environnement `FLASK_SECRET_KEY` avant de lancer l'application :
+     ```bash
+     export FLASK_SECRET_KEY=your-very-secret-key
+     ```
+   - Si elle n'est pas définie, l'application fonctionnera toujours pour le développement local et les tests.
+
+8. **Lancer l'application:**
+   ```bash
+   python main.py
    ```
 
 ## 🚀 Lancement de l'Application
