@@ -63,11 +63,10 @@ def delete_incident(incident_id):
     conn.execute('DELETE FROM incidents WHERE id = ?', (incident_id,))
     conn.commit()
     conn.close()
-    # Notifie le serveur websocket pour la mise à jour en temps réel
-    try:
-        requests.post('http://localhost:8001/broadcast', json={"message": "incident_deleted"}, timeout=1)
-    except Exception as e:
-        print(f"WebSocket notification failed: {e}")
+    # Notifie les clients en temps réel via Flask-SocketIO (à adapter selon votre logique)
+    # Par exemple, vous pouvez émettre un événement Socket.IO ici si besoin
+    # socketio.emit('incident_deleted', {'id': incident_id})
+    # (nécessite d'importer socketio depuis main.py ou d'utiliser un signal)
     return jsonify({'message': 'Incident supprimé avec succès'}), 200
 
 @incidents_api.route('/api/incidents/<int:incident_id>', methods=['PATCH'])
@@ -87,11 +86,8 @@ def update_incident_status(incident_id):
     conn.commit()
     conn.close()
     print("Statut de l'incident mis à jour avec succès", file=sys.stderr)
-    # Notifie le serveur websocket pour la mise à jour en temps réel
-    try:
-        requests.post('http://localhost:8001/broadcast', json={"message": "incident_updated"}, timeout=1)
-    except Exception as e:
-        print(f"WebSocket notification failed: {e}")
+    # Notifie les clients en temps réel via Flask-SocketIO (à adapter selon votre logique)
+    # socketio.emit('incident_updated', {'id': incident_id, 'status': data['status']})
     return jsonify({'message': "Statut de l'incident mis à jour avec succès"}), 200
 
 @incidents_api.route('/api/incidents', methods=['POST'])
@@ -111,11 +107,8 @@ def add_incident():
     )
     conn.commit()
     conn.close()
-    # Notifie le serveur websocket pour la mise à jour en temps réel
-    try:
-        requests.post('http://localhost:8001/broadcast', json={"message": "incident_added"}, timeout=1)
-    except Exception as e:
-        print(f"WebSocket notification failed: {e}")
+    # Notifie les clients en temps réel via Flask-SocketIO (à adapter selon votre logique)
+    # socketio.emit('incident_added', {'id': ...})
     return jsonify({'message': 'Incident ajouté avec succès'}), 201
 
 @incidents_api.route('/api/incidents', methods=['GET'])
