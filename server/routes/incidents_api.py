@@ -47,7 +47,7 @@ def init_db():
     try:
         conn.execute("ALTER TABLE incidents ADD COLUMN status TEXT DEFAULT 'unsolved'")
     except Exception:
-        pass  # Ignore si déjà présente
+        print("ALTER TABLE incidents: colonne 'status' déjà présente ou erreur ignorée.")
     conn.commit()
     conn.close()
 
@@ -67,7 +67,7 @@ def delete_incident(incident_id):
     try:
         requests.post('http://localhost:8001/broadcast', json={"message": "incident_deleted"}, timeout=1)
     except Exception:
-        pass
+        print(f"WebSocket notification failed: {e}")
     return jsonify({'message': 'Incident supprimé avec succès'}), 200
 
 @incidents_api.route('/api/incidents/<int:incident_id>', methods=['PATCH'])
@@ -91,7 +91,7 @@ def update_incident_status(incident_id):
     try:
         requests.post('http://localhost:8001/broadcast', json={"message": "incident_updated"}, timeout=1)
     except Exception:
-        pass
+        print(f"WebSocket notification failed: {e}")
     return jsonify({'message': "Statut de l'incident mis à jour avec succès"}), 200
 
 @incidents_api.route('/api/incidents', methods=['POST'])
@@ -115,7 +115,7 @@ def add_incident():
     try:
         requests.post('http://localhost:8001/broadcast', json={"message": "incident_added"}, timeout=1)
     except Exception:
-        pass
+        print(f"WebSocket notification failed: {e}")
     return jsonify({'message': 'Incident ajouté avec succès'}), 201
 
 @incidents_api.route('/api/incidents', methods=['GET'])
