@@ -66,7 +66,7 @@ def delete_incident(incident_id):
     # Notifie le serveur websocket pour la mise à jour en temps réel
     try:
         requests.post('http://localhost:8001/broadcast', json={"message": "incident_deleted"}, timeout=1)
-    except Exception:
+    except Exception as e:
         print(f"WebSocket notification failed: {e}")
     return jsonify({'message': 'Incident supprimé avec succès'}), 200
 
@@ -90,7 +90,7 @@ def update_incident_status(incident_id):
     # Notifie le serveur websocket pour la mise à jour en temps réel
     try:
         requests.post('http://localhost:8001/broadcast', json={"message": "incident_updated"}, timeout=1)
-    except Exception:
+    except Exception as e:
         print(f"WebSocket notification failed: {e}")
     return jsonify({'message': "Statut de l'incident mis à jour avec succès"}), 200
 
@@ -114,7 +114,7 @@ def add_incident():
     # Notifie le serveur websocket pour la mise à jour en temps réel
     try:
         requests.post('http://localhost:8001/broadcast', json={"message": "incident_added"}, timeout=1)
-    except Exception:
+    except Exception as e:
         print(f"WebSocket notification failed: {e}")
     return jsonify({'message': 'Incident ajouté avec succès'}), 201
 
