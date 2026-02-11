@@ -12,14 +12,17 @@ from server.routes.report_route import report_bp  # Page de rapport
 from server.routes.incident_types import incident_types_bp  # Types d'incidents
 from server.routes.incidents_api import incidents_api  # API incidents
 from server.routes.user_settings_api import user_settings_api  # API paramètres utilisateur
+from flask_socketio import SocketIO, emit
+import os
 
 # Initialisation de l'application principale Flask
 
 # Configuration de la clé secrète pour la gestion des sessions Flask
-# ATTENTION : Cette clé est destinée AU DÉVELOPPEMENT UNIQUEMENT. 
-# Remplacez-la par une valeur secrète et sécurisée en production.
+# Par défaut, une clé de développement est utilisée.
+# Pour plus de sécurité en production, définissez la variable d'environnement FLASK_SECRET_KEY.
 app = Flask(__name__)
-app.secret_key = 'dev-key-canmore'
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-key-canmore')
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Enregistrement des blueprints (routes) dans l'application Flask
 from server.routes.info_route import info_bp  # Page d'informations
@@ -33,4 +36,4 @@ app.register_blueprint(info_bp)              # Informations
 
 # Démarrage du serveur Flask (en mode debug pour le développement)
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)

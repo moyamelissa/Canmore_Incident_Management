@@ -1,17 +1,16 @@
-
 /**
  * websocket_client.js
  * Client WebSocket pour la mise à jour en temps réel de l'application.
  */
 
-// Connexion WebSocket au serveur
-const ws = new WebSocket('ws://localhost:8001/ws');
+// Assurez-vous d'inclure la bibliothèque Socket.IO dans votre HTML :
+// <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
+const socket = io(); // Se connecte automatiquement à l'origine du site (Flask)
 
-// Affiche un message lors de la connexion WebSocket
-ws.onopen = function() {
+socket.on('connect', function() {
     const wsMsg = document.createElement('div');
-    wsMsg.textContent = 'Connexion WebSocket établie';
+    wsMsg.textContent = 'Mise à jour en temps réel ACTIVÉE (Socket.IO)';
     wsMsg.style.position = 'fixed';
     wsMsg.style.right = '24px';
     wsMsg.style.bottom = '24px';
@@ -23,14 +22,16 @@ ws.onopen = function() {
     wsMsg.style.fontWeight = 'bold';
     wsMsg.style.zIndex = '9999';
     wsMsg.style.fontSize = '1.1em';
+    wsMsg.style.fontFamily = 'sans-serif';
+    wsMsg.style.letterSpacing = '0.5px';
+    wsMsg.style.textAlign = 'center';
+    wsMsg.style.pointerEvents = 'none';
     document.body.appendChild(wsMsg);
     setTimeout(() => wsMsg.remove(), 3500);
-};
-
-
+});
 
 // Réception d'un message : déclenche la mise à jour en temps réel
-ws.onmessage = function(event) {
+socket.on('message', function(msg) {
     if (typeof window.displayAllIncidents === 'function' && window.map) {
         window.displayAllIncidents(window.map);
     }
@@ -43,13 +44,11 @@ ws.onmessage = function(event) {
                 updateSummary(data);
             });
     }
-};
+});
 
-
-// Affiche un message si la connexion WebSocket est perdue
-ws.onclose = function() {
+socket.on('disconnect', function() {
     const wsErr = document.createElement('div');
-    wsErr.textContent = 'Connexion WebSocket échouée : la mise à jour en temps réel est désactivée.';
+    wsErr.textContent = 'Connexion Socket.IO perdue : la mise à jour en temps réel est désactivée.';
     wsErr.style.position = 'fixed';
     wsErr.style.right = '24px';
     wsErr.style.bottom = '24px';
@@ -62,5 +61,8 @@ ws.onclose = function() {
     wsErr.style.zIndex = '9999';
     wsErr.style.fontSize = '1.1em';
     document.body.appendChild(wsErr);
-    setTimeout(() => wsErr.remove(), 6000);
-};
+    setTimeout(() => wsErr.remove(), 3500);
+});
+
+// Pour envoyer un message :
+// socket.emit('message', 'Votre message ici');

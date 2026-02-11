@@ -1,14 +1,17 @@
-
 # requirements.txt
 # Dépendances Python nécessaires pour l'application Canmore Incident Management
+
+# Version minimale de Python requise
+python_version >= "3.12"
 
 Flask==2.3.0
 Werkzeug==2.3.8
 flask-socketio==5.3.0
 requests==2.31.0
-Sanic==23.12.0
-python-socketio==5.9.0
-python-engineio==4.7.0
+# Sanic et python-socketio ne sont plus nécessaires
+# Sanic==23.12.0
+# python-socketio==5.9.0
+# python-engineio==4.7.0
 pytest==7.4.0
 pytest-cov==4.1.0
 
