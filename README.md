@@ -12,7 +12,7 @@ Canmore Incident Management is a web-based incident reporting and tracking appli
 
 ## 🚀 Live Demo
 
-- YouTube Demo: [Link TBD]
+- YouTube Demo: [https://www.youtube.com/watch?v=YKiiNFLKF_c]
 - Deployed Web App: [https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/](https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/)
 
 ## ✨ Features
@@ -178,7 +178,7 @@ Canmore Incident Management est une application web de signalement et de suivi d
 
 ## 🚀 Démo en ligne
 
-- Démo YouTube : [Lien à venir]
+- Démo YouTube : [https://www.youtube.com/watch?v=YKiiNFLKF_c]
 - Application déployée : [https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/](https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/)
 
 ## ✨ Fonctionnalités
