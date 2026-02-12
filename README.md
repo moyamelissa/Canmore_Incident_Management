@@ -25,7 +25,7 @@ Canmore Incident Management is a web-based incident reporting and tracking appli
 
 ## 🛠️ Technologies Used
 
-- **Backend:** Python (Flask, Sanic)
+- **Backend:** Python (Flask, Flask-SocketIO)
 - **Frontend:** JavaScript (Leaflet.js, WebSocket)
 - **Markup:** HTML5, CSS3
 - **Database:** SQLite (incidents), CSV (reference data: addresses, buildings, parks, trails)
@@ -115,15 +115,9 @@ Canmore Incident Management is a web-based incident reporting and tracking appli
 
 ## 🚀 Launching the Application
 
-The application requires two servers to run simultaneously:
+The application requires only the Flask server to run:
 
-**Terminal 1 - WebSocket Server:**
-```bash
-python websocket_server.py
-```
-The WebSocket server will start on `http://localhost:8001`
-
-**Terminal 2 - Flask Web Server:**
+**Flask Web Server:**
 ```bash
 python main.py
 ```
@@ -197,7 +191,7 @@ Canmore Incident Management est une application web de signalement et de suivi d
 
 ## 🛠️ Technologies Utilisées
 
-- **Backend:** Python (Flask, Sanic)
+- **Backend:** Python (Flask, Flask-SocketIO)
 - **Frontend:** JavaScript (Leaflet.js, WebSocket)
 - **Markup:** HTML5, CSS3
 - **Base de Données:** SQLite (incidents), CSV (données de référence: adresses, bâtiments, parcs, sentiers)
@@ -287,15 +281,9 @@ Canmore Incident Management est une application web de signalement et de suivi d
 
 ## 🚀 Lancement de l'Application
 
-L'application nécessite deux serveurs fonctionnant simultanément:
+L'application nécessite uniquement le serveur Flask pour fonctionner:
 
-**Terminal 1 - Serveur WebSocket:**
-```bash
-python websocket_server.py
-```
-Le serveur WebSocket démarrera sur `http://localhost:8001`
-
-**Terminal 2 - Serveur Flask:**
+**Serveur Flask:**
 ```bash
 python main.py
 ```
