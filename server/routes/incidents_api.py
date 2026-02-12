@@ -64,7 +64,10 @@ def delete_incident(incident_id):
     conn.commit()
     conn.close()
     # Notifie les clients en temps réel via Flask-SocketIO
-    current_app.socketio.emit('incident_deleted', {'id': incident_id})
+    try:
+        current_app.socketio.emit('incident_deleted', {'id': incident_id})
+    except Exception as e:
+        print(f"Socket.IO notification failed: {e}")
     return jsonify({'message': 'Incident supprimé avec succès'}), 200
 
 @incidents_api.route('/api/incidents/<int:incident_id>', methods=['PATCH'])
@@ -85,7 +88,10 @@ def update_incident_status(incident_id):
     conn.close()
     print("Statut de l'incident mis à jour avec succès", file=sys.stderr)
     # Notifie les clients en temps réel via Flask-SocketIO
-    current_app.socketio.emit('incident_updated', {'id': incident_id, 'status': data['status']})
+    try:
+        current_app.socketio.emit('incident_updated', {'id': incident_id, 'status': data['status']})
+    except Exception as e:
+        print(f"Socket.IO notification failed: {e}")
     return jsonify({'message': "Statut de l'incident mis à jour avec succès"}), 200
 
 @incidents_api.route('/api/incidents', methods=['POST'])
@@ -106,7 +112,17 @@ def add_incident():
     conn.commit()
     conn.close()
     # Notifie les clients en temps réel via Flask-SocketIO
-    current_app.socketio.emit('incident_added', {'type': data['type'], 'description': data['description'], 'latitude': data['latitude'], 'longitude': data['longitude'], 'timestamp': data['timestamp'], 'status': status})
+    try:
+        current_app.socketio.emit('incident_added', {
+            'type': data['type'],
+            'description': data['description'],
+            'latitude': data['latitude'],
+            'longitude': data['longitude'],
+            'timestamp': data['timestamp'],
+            'status': status
+        })
+    except Exception as e:
+        print(f"Socket.IO notification failed: {e}")
     return jsonify({'message': 'Incident ajouté avec succès'}), 201
 
 @incidents_api.route('/api/incidents', methods=['GET'])
