@@ -159,6 +159,8 @@ The application will be available at `http://localhost:5000`
 - Map tiles: Leaflet.js
 - Geographic data: OpenStreetMap
 - **Official Canmore data:** https://opendata-canmore.opendata.arcgis.com/
+- Icons: https://www.flaticon.com
+- Music: https://sounddino.com
 
 ## 📄 License
 
@@ -325,6 +327,8 @@ L'application sera accessible sur `http://localhost:5000`
 - Tuiles de carte : Leaflet.js
 - Données géographiques : OpenStreetMap
 - **Données officielles de Canmore:** https://opendata-canmore.opendata.arcgis.com/
+- Icônes : https://www.flaticon.com
+- Musique : https://sounddino.com
 
 ## 📄 Licence
 
