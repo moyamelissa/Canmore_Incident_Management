@@ -335,10 +335,3 @@ L'application sera accessible sur `http://localhost:5000`
 Ce projet est autorisé sous la Licence MIT. Consultez le fichier LICENSE pour plus d'informations.
 
 ---
-
-## 🚀 Live Demo / Démo en ligne
-
-- YouTube Demo: [Link TBD]
-- Démo YouTube : [Lien à venir]
-- Deployed Web App: [https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/](https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/)
-- Application déployée : [https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/](https://canmore-incident-management-fxdcc6esbmc4g0aw.canadacentral-01.azurewebsites.net/)
