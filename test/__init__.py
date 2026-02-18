@@ -15,3 +15,18 @@ This package contains modular, organized unit tests:
 
 Total: 57 organized tests across 10 focused modules
 """
+"""
+Ce package contient des tests unitaires modulaires et organisés :
+- test_templates.py : Tests du rendu des templates Flask
+- test_api.py : Tests des endpoints de l’API REST
+- test_json.py : Tests de la sérialisation/désérialisation JSON
+- test_validation.py : Tests de la validation des entrées et de la gestion des erreurs
+- test_database.py : Tests des opérations CRUD, transactions et schéma avec SQLite
+- test_csv.py : Tests de lecture et d’écriture des fichiers CSV
+- test_pickle.py : Tests de la sérialisation et désérialisation avec Pickle
+- test_binary.py : Tests d’entrée/sortie et de manipulation de fichiers binaires
+- test_algorithms.py : Tests unitaires d’algorithmes, incluant la recherche binaire
+- test_websocket.py : Tests d’intégration et de connexion WebSocket
+
+Total : 57 tests organisés dans 10 modules spécialisés
+"""
