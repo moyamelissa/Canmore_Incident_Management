@@ -78,8 +78,8 @@
     <!-- Scripts de gestion des incidents, recherche, export et WebSocket -->
     <script>
     // =========================
-    // Titre: Chargement et affichage des incidents
-    // Explication: Récupère les incidents depuis l'API et met à jour le tableau et les cartes de résumé
+    // Chargement et affichage des incidents
+    // Récupère les incidents depuis l'API et met à jour le tableau et les cartes de résumé
     // =========================
     let allIncidents = [];
     fetch('/api/incidents')
@@ -91,8 +91,8 @@
         });
 
     // =========================
-    // Titre: Fonction d'affichage du tableau
-    // Explication: Affiche les incidents dans le tableau avec statut en français et date normalisée
+    // Fonction d'affichage du tableau
+    // Affiche les incidents dans le tableau avec statut en français et date normalisée
     // =========================
     function updateTable(data) {
         const tbody = document.querySelector('#incident-table tbody');
@@ -115,8 +115,8 @@
     }
 
     // =========================
-    // Titre: Mise à jour des cartes de résumé
-    // Explication: Calcule et affiche le nombre d'incidents résolus, non résolus et total
+    // Mise à jour des cartes de résumé
+    // Calcule et affiche le nombre d'incidents résolus, non résolus et total
     // =========================
     function updateSummary(data) {
         let resolved = 0, unresolved = 0;
@@ -130,8 +130,8 @@
     }
 
     // =========================
-    // Titre: Recherche et filtrage
-    // Explication: Permet de filtrer le tableau par type, description, statut ou date
+    // Recherche et filtrage
+    // Permet de filtrer le tableau par type, description, statut ou date
     // =========================
     document.getElementById('search-input').addEventListener('input', function() {
         const val = this.value.toLowerCase().trim();
@@ -163,8 +163,8 @@
     });
 
     // =========================
-    // Titre: Export CSV
-    // Explication: Permet d'exporter les incidents affichés au format CSV
+    // Export CSV
+    // Permet d'exporter les incidents affichés au format CSV
     // =========================
     document.getElementById('export-btn').addEventListener('click', function() {
         // Ajoute un BOM UTF-8 pour que Excel lise correctement les accents
